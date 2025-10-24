@@ -1,32 +1,10 @@
-import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5 import uic
+import os, sys
+from PySide6.QtUiTools import loadUiType
+from PySide6.QtCore import QCoreApplication, Signal, Slot, Qt
+from PySide6.QtWidgets import QApplication
 
-
-class UI(QtWidgets.QMainWindow):
-    def __init__(self):
-        super(UI, self).__init__()
-        uic.loadUi("Frontend.ui", self)
-        self.show()
-
-class ScoreData:
-    FeI_WorkplaceConf: int = None
-    FeII_SoftwareProdPlanning: int = None
-    FeII_AlgorithmDev: int = None
-    FeII_Economy: int = None
-    FeII_ProjectWork: int = None
-    FeII_ProjectDefence: int = None
-
-class ExamResultData:
-    FinalMark: int = None
-    FeI_Mark: int = None
-    FeI_WorkplaceConfMark: None
-    FeII_Mark: int = None
-    FeII_AlgorithmDevMark: int = None
-    FeII_EconomyMark: int = None
-    FeII_ProjectOverallMark: int = None
-
-
+GUI_FILENAME = "Frontend.ui"
+Form, Base = loadUiType(os.path.join(sys.path[1], GUI_FILENAME))
 
 def VALIDATE(condition):
     if not condition:
@@ -37,16 +15,30 @@ def calcGrade(score: int):
     VALIDATE(100 >= score >= 0)
     return GRADES_JMPTBL[score]
 
-def calcExamResults(scores: ScoreData):
-    scores.FeI_WorkplaceConf
+
+class MainWindow(Base, Form):
+    def __init__(self, parent=None):
+        super(self.__class__, self).__init__(parent)
+        self.setupUi(self)
+        self.connect_slots()
+
+    def on_btnCalc_clicked(self):
+        if str(self.LeFei.text()).isnumeric():
+            scoreFe1 = int(self.LeFei.text())
+            self.lblGradeFei.setText(str(calcGrade(scoreFe1)))
+
+    def connect_slots(self):
+        self.btnCalc.clicked.connect(self.on_btnCalc_clicked)
+
+
 
 def main():
-    score = input("Score: ")
-    print(calcGrade(int(score)))
-    pass
+    QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+    app = QApplication(sys.argv)
+    os.chdir(sys.path[1])
+    widget = MainWindow()
+    widget.show()
+    sys.exit(app.exec())
 
 if __name__ == "__main__":
     main()
-    app = QtWidgets.QApplication(sys.argv)
-    window = UI()
-    app.exec()
