@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, math
 from PySide6.QtUiTools import loadUiType
 from PySide6.QtCore import QCoreApplication, Signal, Slot, Qt
 from PySide6.QtWidgets import QApplication
@@ -23,9 +23,36 @@ class MainWindow(Base, Form):
         self.connect_slots()
 
     def on_btnCalc_clicked(self):
-        if str(self.LeFei.text()).isnumeric():
-            scoreFe1 = int(self.LeFei.text())
-            self.lblGradeFei.setText(str(calcGrade(scoreFe1)))
+        
+        def set_grades(input_field, output_label):
+            score = None
+            if str(input_field.text()).isnumeric():
+                score = int(input_field.text())
+                grade = calcGrade(score)
+                output_label.setText(str(grade))
+            return score
+        
+        overall_score = 0
+        overall_score += .2 * self.set_grades(self.LeFei, self.lblGradeFei)
+        overall_score += .1 * self.set_grades(self.LeFeiiProductplanning_2, self.lblGradeFeiiProductplanning)
+        overall_score += .1 * self.set_grades(self.LeFeiiAlgorithmdevelopment_2, self.lblGradeFeiiProductplanningAlgorithmdevelopmen)
+        overall_score += .1 * self.set_grades(self.LeFeiieconomy_2, self.lblGradeFeiiProductplanningEconomy)
+        theory_score = self.set_grades(self.LeExaminationproject_2, self.lblGradeExaminationprojecti)
+        oral_score = self.set_grades(self.LeExaminationprojectDefence_2, self.lblGradeExaminationprojecti)
+
+        overall_score += .25 * theory_score + .25 * oral_score
+
+        self.lblGradeExaminationprojecti.setText(str(
+            calcGrade(math.ceil(.5 * theory_score + .5 * oral_score))
+        ))
+
+        overall_grade = calcGrade(math.ceil(overall_score))
+
+        self.lblTotalResult.setText("Note: " + str(
+            calcGrade(math.ceil(overall_score))
+        ))
+
+        self.lblpassed.setText("nicht bestanden" if overall_grade > 4.4 else "bestanden")
 
     def connect_slots(self):
         self.btnCalc.clicked.connect(self.on_btnCalc_clicked)
