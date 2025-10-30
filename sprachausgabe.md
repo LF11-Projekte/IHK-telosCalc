@@ -8,7 +8,41 @@ Dokumentation: https://pyttsx3.readthedocs.io/en/latest/engine.html
 
 Jede Sprachausgabe basiert auf einem angesteurten Sprachengine: Diese wiederum wird durch den User durch den pyttsx3.init() Befehl aufgerufen.
 
+Sprachausgabe mit suchfunktion in den systemsprachen
+```
+import pyttsx3
 
+engine = pyttsx3.init()
+
+def getLanguageId(language):
+    """
+    function searches for the possible languages, if param language exists it set the engine language to the wished
+    :param language: wanted language
+    :return: path (voice id)
+    """
+    for voice in engine.getProperty('voices'):
+        if language in voice.name.lower():
+            return voice.id
+    raise RuntimeError("Language not installed")
+
+
+
+
+def speaker(language, text):
+    """
+    speaks the wanted text
+    :param language: defines the wanted language
+    :param text: speaks the wished text
+    :return: voice
+    """
+    engine.setProperty('voice', language)
+    engine.say(text)
+    engine.runAndWait()
+
+speaker("german", "zu sprechender Text")
+```
+
+Code Versuche (keine qualitative Dokumentation)
 ```
 import pyttsx3
 
