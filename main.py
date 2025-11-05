@@ -1,7 +1,10 @@
 import os, sys, math
 from PySide6.QtUiTools import loadUiType
 from PySide6.QtCore import QCoreApplication, Signal, Slot, Qt
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QFileDialog
+from qt_material import apply_stylesheet
+
+import DataManager
 
 GUI_FILENAME = "Frontend.ui"
 Form, Base = loadUiType(os.path.join(sys.path[1], GUI_FILENAME))
@@ -21,17 +24,24 @@ class MainWindow(Base, Form):
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
         self.connect_slots()
+        self.dataManager = None
+
+    def set_grades(self, input_field, output_label):
+        score = None
+        if str(input_field.text()).isnumeric():
+            score = int(input_field.text())
+            grade = calcGrade(score)
+            output_label.setText(str(grade))
+        return score
+
+    def get_score(self, input_field):
+        score = None
+        if str(input_field.text()).isnumeric():
+            score = int(input_field.text())
+        return score
 
     def on_btnCalc_clicked(self):
-        
-        def set_grades(input_field, output_label):
-            score = None
-            if str(input_field.text()).isnumeric():
-                score = int(input_field.text())
-                grade = calcGrade(score)
-                output_label.setText(str(grade))
-            return score
-        
+
         overall_score = 0
         overall_score += .2 * self.set_grades(self.LeFei, self.lblGradeFei)
         overall_score += .1 * self.set_grades(self.LeFeiiProductplanning_2, self.lblGradeFeiiProductplanning)
@@ -41,6 +51,14 @@ class MainWindow(Base, Form):
         oral_score = self.set_grades(self.LeExaminationprojectDefence_2, self.lblGradeExaminationprojecti)
 
         overall_score += .25 * theory_score + .25 * oral_score
+
+        self.dataManager(self.get_score(self.LeFei),
+                         self.get_score(self.LeFeiiProductplanning_2),
+                         self.get_score(self.LeFeiiAlgorithmdevelopment_2),
+                         self.get_score(self.LeFeiieconomy_2),
+                         self.get_score(self.LeExaminationproject_2),
+                         self.get_score(self.LeExaminationprojectDefence_2)
+        )
 
         self.lblGradeExaminationprojecti.setText(str(
             calcGrade(math.ceil(.5 * theory_score + .5 * oral_score))
@@ -54,8 +72,16 @@ class MainWindow(Base, Form):
 
         self.lblpassed.setText("nicht bestanden" if overall_grade > 4.4 else "bestanden")
 
+    def on_btnSave_clicked(self):
+        options = None  # QFileDialog.Option.DontUseNativeDialog
+        fileName, filter = QFileDialog.getSaveFileName(self,
+                                                       caption="Datei speichern",
+                                                       filter="Alle Typen (*);;JSON (*.json)")
+        self.dataManager.saveToFile(fileName)
+
     def connect_slots(self):
         self.btnCalc.clicked.connect(self.on_btnCalc_clicked)
+        self.btnSave.clicked.connect(self.on_btnSave_clicked)
 
 
 
@@ -64,6 +90,11 @@ def main():
     app = QApplication(sys.argv)
     os.chdir(sys.path[1])
     widget = MainWindow()
+
+    # from qt_material
+    apply_stylesheet(app, "dark_teal.xml")
+    #apply_stylesheet(app, "light_blue.xml")
+
     widget.show()
     sys.exit(app.exec())
 
