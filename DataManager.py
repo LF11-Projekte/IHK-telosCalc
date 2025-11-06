@@ -1,5 +1,5 @@
 import json, math
-from typing import Literal
+from typing import Literal, Optional
 from PySide6.QtWidgets import QFileDialog
 
 
@@ -24,6 +24,9 @@ class DataManager:
         self.fe2_OralSupplementaryExamination: int | None = fe2_OralSupplementaryExamination
         self.fe2_OralSupplementaryExaminationSubject: Literal["PlanningASoftwareProduct",
         "DevelopmentAndImplementationOfAlgorithms", "EconomicsAndSocialStudies"] | None = fe2_OralSupplementaryExaminationSubject
+        self.calculate_all_grades()
+
+    def handle_supplementary_exam(self):
 
         if self.fe2_OralSupplementaryExaminationSubject == "PlanningASoftwareProduct":
             self.fe2_PlanningASoftwareProduct = self.calc_supplementary_score(self.fe2_OralSupplementaryExamination,
@@ -35,13 +38,22 @@ class DataManager:
             self.fe2_EconomicsAndSocialStudies = self.calc_supplementary_score(self.fe2_OralSupplementaryExamination,
                                                                               self.fe2_EconomicsAndSocialStudies)
 
+    def calculate_all_grades(self):
+
+        self.handle_supplementary_exam()
+
         self.fe1_ItWorkstation_Grade: float | None = self.calc_grade(self.fe1_ItWorkstation)
         self.fe2_PlanningASoftwareProduct_Grade: float | None = self.calc_grade(self.fe2_PlanningASoftwareProduct)
         self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade: float | None = self.calc_grade(self.fe2_DevelopmentAndImplementationOfAlgorithms)
         self.fe2_EconomicsAndSocialStudies_Grade: float | None = self.calc_grade(self.fe2_EconomicsAndSocialStudies)
 
-        self.fe2_PlanningAndImplementingASoftwareProduct_Score: int | None = math.ceil(
-            .5 * fe2_PlanningAndImplementingASoftwareProduct_Oral + .5 * self.fe2_PlanningAndImplementingASoftwareProduct_Written)
+        a: float = self.fe2_PlanningAndImplementingASoftwareProduct_Oral if self.fe2_PlanningAndImplementingASoftwareProduct_Oral is not None else 0
+        b: float = self.fe2_PlanningAndImplementingASoftwareProduct_Written if self.fe2_PlanningAndImplementingASoftwareProduct_Written is not None else 0
+
+        print(a)
+        print(b)
+
+        self.fe2_PlanningAndImplementingASoftwareProduct_Score: int | None = int(math.ceil(0.5 * float(a) + 0.5 * float(b)))
         self.fe2_PlanningAndImplementingASoftwareProduct_Grade: int | None = self.calc_grade(self.fe2_PlanningAndImplementingASoftwareProduct_Score)
 
 
@@ -53,7 +65,7 @@ class DataManager:
                          4.0, 3.9, 3.9, 3.8, 3.8, 3.7, 3.6, 3.6, 3.5, 3.5, 3.4, 3.3, 3.3, 3.2, 3.1, 3.0, 3.0, 2.9, 2.8,
                          2.8, 2.7, 2.6, 2.5, 2.5, 2.4, 2.3, 2.2, 2.1, 2.0, 2.0, 1.9, 1.8, 1.7, 1.6, 1.5, 1.4, 1.4, 1.3,
                          1.3, 1.2, 1.2, 1.1, 1.1, 1.0]
-        return GRADES_JMPTBL[score] if 0 < score < 100 and score is not None else None
+        return GRADES_JMPTBL[score] if 0 <= score <= 100 and score is not None else None
 
     @staticmethod
     def calc_supplementary_score(supplementary_score: int | None, first_score: int | None):
@@ -65,11 +77,11 @@ class DataManager:
     def has_passed(self) -> bool:
         return \
             True if \
-            self.fe1_ItWorkstation_Grade < 4.5 and \
-            self.fe2_PlanningASoftwareProduct_Grade < 4.5 and \
-            self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade < 4.5 and \
-            self.fe2_EconomicsAndSocialStudies_Grade < 4.5 and \
-            self.fe2_PlanningAndImplementingASoftwareProduct_Grade < 4.5 \
+            self.fe1_ItWorkstation_Grade is not None and self.fe1_ItWorkstation_Grade < 4.5 and \
+            self.fe2_PlanningASoftwareProduct_Grade is not None and self.fe2_PlanningASoftwareProduct_Grade < 4.5 and \
+            self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade is not None and self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade < 4.5 and \
+            self.fe2_EconomicsAndSocialStudies_Grade is not None and self.fe2_EconomicsAndSocialStudies_Grade < 4.5 and \
+            self.fe2_PlanningAndImplementingASoftwareProduct_Grade is not None and self.fe2_PlanningAndImplementingASoftwareProduct_Grade < 4.5 \
             else False
 
     def saveToFile(self, fileName):
