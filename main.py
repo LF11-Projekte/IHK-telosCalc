@@ -1,4 +1,6 @@
 import os, sys, math
+
+from PyQt6.QtCore import pyqtSlot
 from PySide6.QtUiTools import loadUiType
 from PySide6.QtCore import QCoreApplication, Signal, Slot, Qt
 from PySide6.QtWidgets import QApplication, QFileDialog
@@ -6,17 +8,10 @@ from qt_material import apply_stylesheet
 
 import DataManager
 
-GUI_FILENAME = "Frontend.ui"
+#GUI_FILENAME = "Frontend.ui"
+GUI_FILENAME = "untitled.ui"
 Form, Base = loadUiType(os.path.join(sys.path[1], GUI_FILENAME))
-
-def VALIDATE(condition):
-    if not condition:
-        raise Exception("Validation failed!")
-
-def calcGrade(score: int):
-    GRADES_JMPTBL = [6.0,6.0,6.0,6.0,6.0,5.9,5.9,5.9,5.9,5.9,5.8,5.8,5.8,5.8,5.8,5.7,5.7,5.7,5.7,5.7,5.6,5.6,5.6,5.6,5.6,5.5,5.5,5.5,5.5,5.5,5.4,5.4,5.3,5.3,5.2,5.2,5.1,5.1,5.0,5.0,4.9,4.9,4.8,4.8,4.7,4.7,4.6,4.6,4.5,4.5,4.4,4.3,4.3,4.2,4.2,4.1,4.0,4.0,3.9,3.9,3.8,3.8,3.7,3.6,3.6,3.5,3.5,3.4,3.3,3.3,3.2,3.1,3.0,3.0,2.9,2.8,2.8,2.7,2.6,2.5,2.5,2.4,2.3,2.2,2.1,2.0,2.0,1.9,1.8,1.7,1.6,1.5,1.4,1.4,1.3,1.3,1.2,1.2,1.1,1.1,1.0]
-    VALIDATE(100 >= score >= 0)
-    return GRADES_JMPTBL[score]
+app = None
 
 
 class MainWindow(Base, Form):
@@ -24,7 +19,7 @@ class MainWindow(Base, Form):
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
         self.connect_slots()
-        self.dataManager = None
+        self.dataManager = DataManager.DataManager(0,0,0,0,0,0,0, None)
 
     def set_grades(self, input_field, output_label):
         score = None
@@ -79,21 +74,71 @@ class MainWindow(Base, Form):
                                                        filter="Alle Typen (*);;JSON (*.json)")
         self.dataManager.saveToFile(fileName)
 
+    def set_success(self):
+        self.lblSuccess.setText("Die Prüfung wurde bestanden." if self.dataManager.has_passed() else "Die Prüfung wurde nicht bestanden.")
+
+    def on_numValue1_changed(self, num: int):
+        self.dataManager.fe1_ItWorkstation = num
+        self.dataManager.calculate_all_grades()
+        self.lblFe1Output.setText(str(self.dataManager.fe1_ItWorkstation_Grade))
+        self.set_success()
+
+
+    def on_numValue2_changed(self, num: int):
+        self.dataManager.fe2_PlanningASoftwareProduct = num
+        self.dataManager.calculate_all_grades()
+        self.lblFe2Output1.setText(str(self.dataManager.fe2_PlanningASoftwareProduct_Grade))
+        self.set_success()
+
+    def on_numValue3_changed(self, num: int):
+        self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms = num
+        self.dataManager.calculate_all_grades()
+        self.lblFe2Output2.setText(str(self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms_Grade))
+        self.set_success()
+
+    def on_numValue4_changed(self, num: int):
+        self.dataManager.fe2_EconomicsAndSocialStudies = num
+        self.dataManager.calculate_all_grades()
+        self.lblFe2Output3.setText(str(self.dataManager.fe2_EconomicsAndSocialStudies_Grade))
+        self.set_success()
+
+    def on_numValue5_changed(self, num: int):
+        self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Written = self.numFe2_7.value
+        self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Oral = self.numFe2_8.value
+        self.dataManager.calculate_all_grades()
+        self.numFe2_6.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Score)
+        self.lblFe1Output.setText(str(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Grade))
+        self.set_success()
+
+    def set_dark_mode(self):
+        apply_stylesheet(app, "dark_teal.xml")
+    def set_bright_mode(self):
+        apply_stylesheet(app, "light_blue.xml")
+
     def connect_slots(self):
-        self.btnCalc.clicked.connect(self.on_btnCalc_clicked)
-        self.btnSave.clicked.connect(self.on_btnSave_clicked)
+        self.numFe1.valueChanged.connect(lambda num: self.on_numValue1_changed(num))
+        self.numFe2_1.valueChanged.connect(lambda num: self.on_numValue2_changed(num))
+        self.numFe2_2.valueChanged.connect(lambda num: self.on_numValue3_changed(num))
+        self.numFe2_3.valueChanged.connect(lambda num: self.on_numValue4_changed(num))
+        self.numFe2_7.valueChanged.connect(lambda num: self.on_numValue5_changed(num))
+        self.numFe2_8.valueChanged.connect(lambda num: self.on_numValue5_changed(num))
+        self.actionBright.triggered.connect(self.set_bright_mode)
+        self.actionDark.triggered.connect(self.set_dark_mode)
+        #self.btnSave.clicked.connect(self.on_btnSave_clicked)
+        pass
 
 
 
 def main():
+    global app
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     app = QApplication(sys.argv)
     os.chdir(sys.path[1])
     widget = MainWindow()
 
     # from qt_material
-    apply_stylesheet(app, "dark_teal.xml")
-    #apply_stylesheet(app, "light_blue.xml")
+    #apply_stylesheet(app, "dark_teal.xml")
+    apply_stylesheet(app, "light_blue.xml")
 
     widget.show()
     sys.exit(app.exec())
