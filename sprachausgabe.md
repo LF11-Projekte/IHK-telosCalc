@@ -12,6 +12,80 @@ Sprachausgabe mit suchfunktion in den systemsprachen
 ```
 import pyttsx3
 
+
+class TTS:
+
+    lang_id_table = None
+    engine = None
+
+
+    @staticmethod
+    def get_language_id(language):
+        """
+        function searches for the possible languages, if param language exists it set the engine language to the wished
+        :param language: wanted language
+        :return: path (voice id)
+        """
+        for voice in TTS.engine.getProperty('voices'):
+            if language.lower() in voice.name.lower():
+                return voice.id
+        raise RuntimeError("Language not installed")
+
+
+    @staticmethod
+    def tts_stop():
+        if TTS.engine.isBusy():
+            TTS.engine.stop()
+
+    @staticmethod
+    def tts_output(text, language=None):
+        """
+        speaks the wanted text
+        :param language: defines the wanted language
+        :param text: speaks the wished text
+        :return: voice
+        """
+
+        if language is not None:
+            TTS.tts_set_language(language)
+
+        TTS.engine = pyttsx3.init()
+        TTS.engine.say('Sally sells seashells by the seashore.')
+        TTS.engine.say('The quick brown fox jumped over the lazy dog.')
+        TTS.engine.runAndWait()
+
+
+        #TTS.engine.say(text)
+        #TTS.engine.say(text)
+        #TTS.engine.runAndWait()
+        #TTS.engine.stop()
+
+    @staticmethod
+    def tts_set_language(language):
+       TTS.engine.setProperty("voice", TTS.lang_id_table[language])
+
+    @staticmethod
+    def tts_setup():
+
+        TTS.engine = pyttsx3.init()
+        TTS.lang_id_table = {
+            "de": TTS.get_language_id("german"),
+            "en": TTS.get_language_id("english")
+        }
+
+TTS.engine = pyttsx3.init()
+TTS.engine.say('Sally sells seashells by the seashore.')
+TTS.engine.say('The quick brown fox jumped over the lazy dog.')
+TTS.engine.runAndWait()
+
+TTS.tts_setup()
+TTS.tts_output("")
+```
+
+Code Versuche (keine qualitative Dokumentation)
+```
+import pyttsx3
+
 engine = pyttsx3.init()
 
 def getLanguageId(language):
@@ -40,10 +114,9 @@ def speaker(language, text):
     engine.runAndWait()
 
 speaker("german", "zu sprechender Text")
-```
 
-Code Versuche (keine qualitative Dokumentation)
-```
+---------
+
 import pyttsx3
 
 """
