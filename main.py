@@ -1,6 +1,9 @@
-import os, sys, math
+import time
+import os, sys, math, pathlib, ctypes
+from typing import Literal
 
-from PyQt6.QtCore import pyqtSlot
+
+#from PyQt6.QtCore import pyqtSlot
 from PySide6.QtUiTools import loadUiType
 from PySide6.QtCore import QCoreApplication, Signal, Slot, Qt
 from PySide6.QtWidgets import QApplication, QFileDialog
@@ -9,8 +12,11 @@ from qt_material import apply_stylesheet
 import DataManager
 
 #GUI_FILENAME = "Frontend.ui"
-GUI_FILENAME = "untitled.ui"
-Form, Base = loadUiType(os.path.join(sys.path[1], GUI_FILENAME))
+DE_UI_FILENAME = "de_DE.ui"
+EN_UI_FILENAME = "en_EN.ui"
+GUI_FILENAME = "de_DE.ui"
+LANGUAGE: Literal["DE", "EN"] = "DE"
+Form, Base = loadUiType(os.path.join(pathlib.Path(__file__).parent.resolve(), GUI_FILENAME)) # type: ignore
 app = None
 
 
@@ -20,112 +26,107 @@ class MainWindow(Base, Form):
         self.setupUi(self)
         self.connect_slots()
         self.dataManager = DataManager.DataManager(0,0,0,0,0,0,0, None)
+        self.dataManager.calculate_all_grades()
+        self.set_ui_values_by_data_manager()
 
-    def set_grades(self, input_field, output_label):
-        score = None
-        if str(input_field.text()).isnumeric():
-            score = int(input_field.text())
-            grade = calcGrade(score)
-            output_label.setText(str(grade))
-        return score
 
-    def get_score(self, input_field):
-        score = None
-        if str(input_field.text()).isnumeric():
-            score = int(input_field.text())
-        return score
-
-    def on_btnCalc_clicked(self):
-
-        overall_score = 0
-        overall_score += .2 * self.set_grades(self.LeFei, self.lblGradeFei)
-        overall_score += .1 * self.set_grades(self.LeFeiiProductplanning_2, self.lblGradeFeiiProductplanning)
-        overall_score += .1 * self.set_grades(self.LeFeiiAlgorithmdevelopment_2, self.lblGradeFeiiProductplanningAlgorithmdevelopmen)
-        overall_score += .1 * self.set_grades(self.LeFeiieconomy_2, self.lblGradeFeiiProductplanningEconomy)
-        theory_score = self.set_grades(self.LeExaminationproject_2, self.lblGradeExaminationprojecti)
-        oral_score = self.set_grades(self.LeExaminationprojectDefence_2, self.lblGradeExaminationprojecti)
-
-        overall_score += .25 * theory_score + .25 * oral_score
-
-        self.dataManager(self.get_score(self.LeFei),
-                         self.get_score(self.LeFeiiProductplanning_2),
-                         self.get_score(self.LeFeiiAlgorithmdevelopment_2),
-                         self.get_score(self.LeFeiieconomy_2),
-                         self.get_score(self.LeExaminationproject_2),
-                         self.get_score(self.LeExaminationprojectDefence_2)
+    def load_ui_values_to_data_manager(self):
+        self.dataManager.set_all_values(
+            fe1_ItWorkstation=self.numFe1.value(),
+            fe2_PlanningASoftwareProduct=self.numFe2_1.value(),
+            fe2_DevelopmentAndImplementationOfAlgorithms=self.numFe2_2.value(),
+            fe2_EconomicsAndSocialStudies=self.numFe2_3.value(),
+            fe2_PlanningAndImplementingASoftwareProduct_Oral=self.numFe2_8.value(),
+            fe2_PlanningAndImplementingASoftwareProduct_Written=self.numFe2_7.value(),
+            fe2_OralSupplementaryExamination=None,
+            fe2_OralSupplementaryExaminationSubject=None
         )
 
-        self.lblGradeExaminationprojecti.setText(str(
-            calcGrade(math.ceil(.5 * theory_score + .5 * oral_score))
-        ))
 
-        overall_grade = calcGrade(math.ceil(overall_score))
+    def set_ui_values_by_data_manager(self):
+        self.numFe1.setValue(self.dataManager.fe1_ItWorkstation)
+        self.numFe2_1.setValue(self.dataManager.fe2_PlanningASoftwareProduct)
+        self.numFe2_2.setValue(self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms)
+        self.numFe2_3.setValue(self.dataManager.fe2_EconomicsAndSocialStudies)
+        self.numFe2_7.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Written)
+        self.numFe2_8.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Oral)
+        self.numFe2_out.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Score)
 
-        self.lblTotalResult.setText("Note: " + str(
-            calcGrade(math.ceil(overall_score))
-        ))
+        if self.dataManager.fe1_ItWorkstation_Grade:
+            self.lblFe1Output.setText(str(self.dataManager.fe1_ItWorkstation_Grade))
+        if self.dataManager.fe2_PlanningASoftwareProduct_Grade:
+            self.lblFe2Output1.setText(str(self.dataManager.fe2_PlanningASoftwareProduct_Grade))
+        if self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms_Grade:
+            self.lblFe2Output2.setText(str(self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms_Grade))
+        if self.dataManager.fe2_EconomicsAndSocialStudies_Grade:
+            self.lblFe2Output3.setText(str(self.dataManager.fe2_EconomicsAndSocialStudies_Grade))
+        if self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Grade:
+            self.lblFe2Output1_3.setText(str(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Grade))
 
-        self.lblpassed.setText("nicht bestanden" if overall_grade > 4.4 else "bestanden")
+        self.set_success()
 
-    def on_btnSave_clicked(self):
-        options = None  # QFileDialog.Option.DontUseNativeDialog
-        fileName, filter = QFileDialog.getSaveFileName(self,
-                                                       caption="Datei speichern",
-                                                       filter="Alle Typen (*);;JSON (*.json)")
-        self.dataManager.saveToFile(fileName)
 
     def set_success(self):
         self.lblSuccess.setText("Die Prüfung wurde bestanden." if self.dataManager.has_passed() else "Die Prüfung wurde nicht bestanden.")
 
-    def on_numValue1_changed(self, num: int):
-        self.dataManager.fe1_ItWorkstation = num
-        self.dataManager.calculate_all_grades()
-        self.lblFe1Output.setText(str(self.dataManager.fe1_ItWorkstation_Grade))
-        self.set_success()
 
+    def on_numValue_changed(self):
+        self.load_ui_values_to_data_manager()
+        self.set_ui_values_by_data_manager()
 
-    def on_numValue2_changed(self, num: int):
-        self.dataManager.fe2_PlanningASoftwareProduct = num
-        self.dataManager.calculate_all_grades()
-        self.lblFe2Output1.setText(str(self.dataManager.fe2_PlanningASoftwareProduct_Grade))
-        self.set_success()
-
-    def on_numValue3_changed(self, num: int):
-        self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms = num
-        self.dataManager.calculate_all_grades()
-        self.lblFe2Output2.setText(str(self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms_Grade))
-        self.set_success()
-
-    def on_numValue4_changed(self, num: int):
-        self.dataManager.fe2_EconomicsAndSocialStudies = num
-        self.dataManager.calculate_all_grades()
-        self.lblFe2Output3.setText(str(self.dataManager.fe2_EconomicsAndSocialStudies_Grade))
-        self.set_success()
-
-    def on_numValue5_changed(self, num: int):
-        self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Written = self.numFe2_7.value
-        self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Oral = self.numFe2_8.value
-        self.dataManager.calculate_all_grades()
-        self.numFe2_6.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Score)
-        self.lblFe1Output.setText(str(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Grade))
-        self.set_success()
 
     def set_dark_mode(self):
         apply_stylesheet(app, "dark_teal.xml")
+
+
     def set_bright_mode(self):
         apply_stylesheet(app, "light_blue.xml")
 
+
+    def load_from_file_action(self):
+        fileName, _ = QFileDialog.getOpenFileName(self, 
+                                                  caption="Eingabeparameter aus Datei laden",
+                                                  filter="Alle Typen (*);;JSON (*.json)")
+        if fileName:
+            self._disconnect_number_slots()
+            self.dataManager.loadFromFile(fileName)
+            self.dataManager.calculate_all_grades()
+            self.set_ui_values_by_data_manager()
+            self._connect_number_slots()
+
+
+    def save_to_file_action(self):
+        fileName, _ = QFileDialog.getSaveFileName(self,
+                                                  caption="Eingabeparameter in Datei speichern",
+                                                  filter="Alle Typen (*);;JSON (*.json)")
+        if fileName:
+            self.dataManager.saveToFile(fileName)
+
+
     def connect_slots(self):
-        self.numFe1.valueChanged.connect(lambda num: self.on_numValue1_changed(num))
-        self.numFe2_1.valueChanged.connect(lambda num: self.on_numValue2_changed(num))
-        self.numFe2_2.valueChanged.connect(lambda num: self.on_numValue3_changed(num))
-        self.numFe2_3.valueChanged.connect(lambda num: self.on_numValue4_changed(num))
-        self.numFe2_7.valueChanged.connect(lambda num: self.on_numValue5_changed(num))
-        self.numFe2_8.valueChanged.connect(lambda num: self.on_numValue5_changed(num))
+        self._connect_number_slots()
         self.actionBright.triggered.connect(self.set_bright_mode)
         self.actionDark.triggered.connect(self.set_dark_mode)
-        #self.btnSave.clicked.connect(self.on_btnSave_clicked)
-        pass
+        self.actionLoad.triggered.connect(self.load_from_file_action)
+        self.actionSave.triggered.connect(self.save_to_file_action)
+
+
+    def _connect_number_slots(self):
+        self.numFe1.valueChanged.connect(lambda num: self.on_numValue_changed())
+        self.numFe2_1.valueChanged.connect(lambda num: self.on_numValue_changed())
+        self.numFe2_2.valueChanged.connect(lambda num: self.on_numValue_changed())
+        self.numFe2_3.valueChanged.connect(lambda num: self.on_numValue_changed())
+        self.numFe2_7.valueChanged.connect(lambda num: self.on_numValue_changed())
+        self.numFe2_8.valueChanged.connect(lambda num: self.on_numValue_changed())
+
+
+    def _disconnect_number_slots(self):
+        self.numFe1.valueChanged.disconnect()
+        self.numFe2_1.valueChanged.disconnect()
+        self.numFe2_2.valueChanged.disconnect()
+        self.numFe2_3.valueChanged.disconnect()
+        self.numFe2_7.valueChanged.disconnect()
+        self.numFe2_8.valueChanged.disconnect()
 
 
 
@@ -133,7 +134,7 @@ def main():
     global app
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     app = QApplication(sys.argv)
-    os.chdir(sys.path[1])
+    #os.chdir(sys.path[1])
     widget = MainWindow()
 
     # from qt_material
