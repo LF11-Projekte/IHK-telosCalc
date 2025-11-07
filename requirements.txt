@@ -1,2 +1,3 @@
 PySide6
 qt_material
+pyttsx3
