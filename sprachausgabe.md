@@ -12,7 +12,6 @@ Sprachausgabe mit suchfunktion in den systemsprachen
 ```
 import pyttsx3
 
-
 class TTS:
 
     lang_id_table = None
@@ -48,17 +47,9 @@ class TTS:
 
         if language is not None:
             TTS.tts_set_language(language)
-
-        TTS.engine = pyttsx3.init()
-        TTS.engine.say('Sally sells seashells by the seashore.')
-        TTS.engine.say('The quick brown fox jumped over the lazy dog.')
-        TTS.engine.runAndWait()
-
-
-        #TTS.engine.say(text)
-        #TTS.engine.say(text)
-        #TTS.engine.runAndWait()
-        #TTS.engine.stop()
+        TTS.engine.say(text)
+        TTS.engine.startLoop()
+        TTS.engine.endLoop()
 
     @staticmethod
     def tts_set_language(language):
@@ -73,13 +64,9 @@ class TTS:
             "en": TTS.get_language_id("english")
         }
 
-TTS.engine = pyttsx3.init()
-TTS.engine.say('Sally sells seashells by the seashore.')
-TTS.engine.say('The quick brown fox jumped over the lazy dog.')
-TTS.engine.runAndWait()
-
 TTS.tts_setup()
-TTS.tts_output("")
+TTS.tts_output("Tamam", 'en')
+TTS.tts_output("Tamam", 'de')
 ```
 
 Code Versuche (keine qualitative Dokumentation)
