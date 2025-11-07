@@ -1,7 +1,15 @@
 # Sprachausgabe 
 
-## Bibliothek
-Ein Kriterium für unsere Aplikation ist die Sprachausgabe, wir entschieden uns für die Bibliothek pyttsx3. Die Entscheidung viel auf diese Bibliothek da sie isoliert von Application Programming Interfaces funktioniert und dementsprechend auch Offline verfügbar ist. Zudem unerstützt pyttsx3 cross Platforming. 
+## Auswahl der Python-Bibliothek der Sprachausgabe
+Die Sprachausgabe ist eine Kundenanforderung. Wir entschideden uns für die Bibliothek pyttsx3, da sie, im gegensatz zu den meisten anderen Alternativen, auch isoliert von Application Programming Interfaces funktioniert. Dementsprechend ist sie auch Offline verfügbar. Zudem unerstützt pyttsx3 cross Platforming. 
+
+## Nutzer Bedienung
+Der Nutzer muss die Sprachausgabe lediglich in der Menübar der Applikation aktivieren um sprachunterstützung zu zu erhalten.
+
+*scrrenshot*
+
+## Sprachen
+Die Verfügbaren Sprachen sind entsprechend des Kundenwunsches Deutsch sowie Englisch. Die Sprachausgabe ist an die Ausgabe Sprache des User Interface gekoppelt. 
 
 ## Funktionsweise 
 Dokumentation: https://pyttsx3.readthedocs.io/en/latest/engine.html
