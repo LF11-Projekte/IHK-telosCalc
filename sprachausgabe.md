@@ -11,7 +11,6 @@ Jede Sprachausgabe basiert auf einem angesteurten Sprachengine: Diese wiederum w
 Sprachausgabe mit suchfunktion in den systemsprachen
 ```
 import pyttsx3
-import time
 
 class TTS:
 
