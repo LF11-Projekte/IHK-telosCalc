@@ -6,36 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>623</width>
-    <height>765</height>
+    <width>620</width>
+    <height>767</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>623</width>
-    <height>765</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>623</width>
-    <height>765</height>
-   </size>
-  </property>
   <property name="windowTitle">
-   <string>IHK TelosCalc (Notenberechnung)</string>
-  </property>
-  <property name="locale">
-   <locale language="German" country="Germany"/>
-  </property>
-  <property name="tabShape">
-   <enum>QTabWidget::TabShape::Triangular</enum>
+   <string>IHK TelosCalc (Gradenberechnung)</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="gbxFinalExam1">
@@ -93,7 +69,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Note</string>
+         <string>Grade</string>
         </property>
        </widget>
       </item>
@@ -132,9 +108,6 @@
         </property>
         <property name="text">
          <string>Einrichten eines IT-gestützten Arbeitsplatzes</string>
-        </property>
-        <property name="buddy">
-         <cstring>numFe1</cstring>
         </property>
        </widget>
       </item>
@@ -199,9 +172,6 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>numFe1</cstring>
         </property>
        </widget>
       </item>
@@ -335,9 +305,6 @@
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
-        <property name="buddy">
-         <cstring>numFe2_2</cstring>
-        </property>
        </widget>
       </item>
       <item row="0" column="3">
@@ -373,9 +340,6 @@
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
-        <property name="buddy">
-         <cstring>numFe2_1</cstring>
-        </property>
        </widget>
       </item>
       <item row="1" column="0">
@@ -395,9 +359,6 @@
         <property name="text">
          <string>Planen eines Softwareproduktes</string>
         </property>
-        <property name="buddy">
-         <cstring>numFe2_1</cstring>
-        </property>
        </widget>
       </item>
       <item row="0" column="4">
@@ -409,7 +370,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Note</string>
+         <string>Grade</string>
         </property>
        </widget>
       </item>
@@ -464,9 +425,6 @@
         </property>
         <property name="text">
          <string>Mündliche Ergänzungsprüfung</string>
-        </property>
-        <property name="buddy">
-         <cstring>tbtnSupplementary</cstring>
         </property>
        </widget>
       </item>
@@ -528,9 +486,6 @@
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
-        <property name="buddy">
-         <cstring>numFe2_3</cstring>
-        </property>
        </widget>
       </item>
       <item row="0" column="1">
@@ -562,9 +517,6 @@
         </property>
         <property name="text">
          <string>Entwicklung und Umsetzung von Algorithmen</string>
-        </property>
-        <property name="buddy">
-         <cstring>numFe2_2</cstring>
         </property>
        </widget>
       </item>
@@ -600,9 +552,6 @@
         </property>
         <property name="text">
          <string>Wirtschafts- und Sozialkunde</string>
-        </property>
-        <property name="buddy">
-         <cstring>numFe2_3</cstring>
         </property>
        </widget>
       </item>
@@ -800,9 +749,6 @@
         <property name="text">
          <string>Präsentation und Fachgespräch</string>
         </property>
-        <property name="buddy">
-         <cstring>numFe2_8</cstring>
-        </property>
        </widget>
       </item>
       <item row="0" column="2">
@@ -841,9 +787,6 @@
         <property name="text">
          <string>Betriebliche Projektarbeit</string>
         </property>
-        <property name="buddy">
-         <cstring>numFe2_7</cstring>
-        </property>
        </widget>
       </item>
       <item row="1" column="2">
@@ -862,33 +805,6 @@
           <width>73</width>
           <height>24</height>
          </size>
-        </property>
-        <property name="locale">
-         <locale language="German" country="Germany"/>
-        </property>
-        <property name="inputMethodHints">
-         <set>Qt::InputMethodHint::ImhNone</set>
-        </property>
-        <property name="wrapping">
-         <bool>false</bool>
-        </property>
-        <property name="frame">
-         <bool>false</bool>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
-        </property>
-        <property name="accelerated">
-         <bool>false</bool>
-        </property>
-        <property name="keyboardTracking">
-         <bool>false</bool>
-        </property>
-        <property name="showGroupSeparator" stdset="0">
-         <bool>false</bool>
         </property>
         <property name="maximum">
          <number>100</number>
@@ -912,9 +828,6 @@
         <property name="text">
          <string>Planen und Umsetzen eines Softwareprojektes</string>
         </property>
-        <property name="buddy">
-         <cstring>numFe2_out</cstring>
-        </property>
        </widget>
       </item>
      </layout>
@@ -923,7 +836,7 @@
      <property name="geometry">
       <rect>
        <x>33</x>
-       <y>240</y>
+       <y>238</y>
        <width>310</width>
        <height>30</height>
       </rect>
@@ -944,24 +857,20 @@
       <locale language="German" country="Germany"/>
      </property>
      <property name="text">
-      <string>-- mündliche Ergänzungsprüfung auswählen --</string>
+      <string>- mündliche Ergänzungsprüfung auswählen -</string>
      </property>
      <property name="popupMode">
-      <enum>QToolButton::ToolButtonPopupMode::MenuButtonPopup</enum>
+      <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
      </property>
      <property name="toolButtonStyle">
-      <enum>Qt::ToolButtonStyle::ToolButtonTextOnly</enum>
+      <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
      </property>
      <property name="autoRaise">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="arrowType">
-      <enum>Qt::ArrowType::NoArrow</enum>
+      <enum>Qt::ArrowType::DownArrow</enum>
      </property>
-     <addaction name="actionNoSupplementaryExam"/>
-     <addaction name="actionPlanningASoftwareProduct"/>
-     <addaction name="actionDevelopmentAndImplementationOfAlgorithms"/>
-     <addaction name="actionEconomicsAndSocialStudies"/>
     </widget>
     <widget class="Line" name="line_4">
      <property name="geometry">
@@ -999,7 +908,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Note</string>
+      <string>Grade</string>
      </property>
     </widget>
     <widget class="QLabel" name="lblFe2Output1_3">
@@ -1017,9 +926,6 @@
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
-     <property name="buddy">
-      <cstring>numFe2_out</cstring>
-     </property>
     </widget>
     <zorder>gridLayoutWidget_2</zorder>
     <zorder>line_2</zorder>
@@ -1031,46 +937,17 @@
     <zorder>lblGrade2_3</zorder>
     <zorder>lblFe2Output1_3</zorder>
    </widget>
-   <widget class="QLabel" name="lblSuccessFailed">
+   <widget class="QLabel" name="lblSuccess">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>650</y>
-      <width>211</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; color:#aa0000;&quot;&gt;Die Prüfung wurde &lt;/span&gt;&lt;span style=&quot; font-size:10pt; font-weight:700; color:#aa0000;&quot;&gt;nicht&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#aa0000;&quot;&gt; bestanden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lblAverageGrade">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
+      <x>30</x>
       <y>670</y>
       <width>211</width>
-      <height>21</height>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Notendurchschnitt: 6,0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lblSuccessPassed">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>650</y>
-      <width>211</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:700; color:#00aa00;&quot;&gt;Die Prüfung wurde bestanden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>The exam was not passed.</string>
     </property>
    </widget>
   </widget>
@@ -1079,66 +956,64 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>623</width>
+     <width>620</width>
      <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>Datei</string>
+     <string>File</string>
     </property>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
-    <addaction name="actionSampleCertificate"/>
    </widget>
    <widget class="QMenu" name="menuLanguage">
     <property name="title">
-     <string>Sprache</string>
+     <string>Language</string>
     </property>
     <addaction name="actionGerman"/>
     <addaction name="actionEnglish"/>
    </widget>
    <widget class="QMenu" name="menuAppearence">
     <property name="title">
-     <string>Erscheinungsbild</string>
+     <string>Appearence</string>
     </property>
     <widget class="QMenu" name="menuDark">
      <property name="title">
-      <string>dunkel</string>
+      <string>dark</string>
      </property>
-     <addaction name="actionDarkYellow"/>
      <addaction name="actionDarkAmber"/>
-     <addaction name="actionDarkGreen"/>
-     <addaction name="actionDarkTeal"/>
-     <addaction name="actionDarkCyan"/>
      <addaction name="actionDarkBlue"/>
-     <addaction name="actionDarkPurple"/>
+     <addaction name="actionDarkCyan"/>
+     <addaction name="actionDarkGreen"/>
      <addaction name="actionDarkPink"/>
+     <addaction name="actionDarkPurple"/>
+     <addaction name="actionDarkTeal"/>
+     <addaction name="actionDarkYellow"/>
      <addaction name="actionDarkRed"/>
     </widget>
     <widget class="QMenu" name="menuBright">
      <property name="title">
-      <string>hell</string>
+      <string>bright</string>
      </property>
-     <addaction name="actionBrightYellow"/>
      <addaction name="actionBrightAmber"/>
-     <addaction name="actionBrightGreen"/>
-     <addaction name="actionBrightTeal"/>
-     <addaction name="actionBrightCyan"/>
      <addaction name="actionBrightBlue"/>
-     <addaction name="actionBrightPurple"/>
+     <addaction name="actionBrightCyan"/>
+     <addaction name="actionBrightGreen"/>
      <addaction name="actionBrightPink"/>
+     <addaction name="actionBrightPurple"/>
      <addaction name="actionBrightRed"/>
+     <addaction name="actionBrightTeal"/>
+     <addaction name="actionBrightYellow"/>
     </widget>
     <addaction name="menuBright"/>
     <addaction name="menuDark"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Hilfe</string>
+     <string>Help</string>
     </property>
     <addaction name="actionOpenDocs"/>
-    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuLanguage"/>
@@ -1148,210 +1023,117 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoad">
    <property name="text">
-    <string>Eingabeparameter laden</string>
+    <string>load input parameters</string>
    </property>
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>Eingabeparameter speichern</string>
+    <string>save input parameters</string>
    </property>
   </action>
   <action name="actionGerman">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
    <property name="text">
-    <string>Deutsch</string>
+    <string>German</string>
    </property>
   </action>
   <action name="actionEnglish">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="text">
-    <string>Englisch</string>
+    <string>English</string>
    </property>
   </action>
   <action name="actionOpenDocs">
    <property name="text">
-    <string>Dokumentation</string>
+    <string>Documentation</string>
    </property>
   </action>
   <action name="actionDarkAmber">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Bernstein</string>
+    <string>Amber</string>
    </property>
   </action>
   <action name="actionDarkBlue">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Blau</string>
+    <string>Blue</string>
    </property>
   </action>
   <action name="actionDarkCyan">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Blaugrün</string>
+    <string>Cyan</string>
    </property>
   </action>
   <action name="actionDarkGreen">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Hellgrün</string>
+    <string>Lightgreen</string>
    </property>
   </action>
   <action name="actionDarkPink">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Rosa</string>
+    <string>Pink</string>
    </property>
   </action>
   <action name="actionDarkPurple">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Violett</string>
+    <string>Purple</string>
    </property>
   </action>
   <action name="actionDarkTeal">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Aquamarin</string>
+    <string>Teal</string>
    </property>
   </action>
   <action name="actionDarkYellow">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Gelb</string>
+    <string>Yellow</string>
    </property>
   </action>
   <action name="actionDarkRed">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Rot</string>
+    <string>Red</string>
    </property>
   </action>
   <action name="actionBrightAmber">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Bernstein</string>
+    <string>Amber</string>
    </property>
   </action>
   <action name="actionBrightBlue">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Blau</string>
+    <string>Blue</string>
    </property>
   </action>
   <action name="actionBrightCyan">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Blaugrün</string>
+    <string>Cyan</string>
    </property>
   </action>
   <action name="actionBrightGreen">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Hellgrün</string>
+    <string>Lightgreen</string>
    </property>
   </action>
   <action name="actionBrightPink">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Rosa</string>
+    <string>Pink</string>
    </property>
   </action>
   <action name="actionBrightPurple">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Violett</string>
+    <string>Purple</string>
    </property>
   </action>
   <action name="actionBrightRed">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Rot</string>
+    <string>Red</string>
    </property>
   </action>
   <action name="actionBrightTeal">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Aquamarin</string>
+    <string>Teal</string>
    </property>
   </action>
   <action name="actionBrightYellow">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="text">
-    <string>Gelb</string>
-   </property>
-  </action>
-  <action name="actionAbout">
-   <property name="text">
-    <string>Über</string>
-   </property>
-  </action>
-  <action name="actionSampleCertificate">
-   <property name="text">
-    <string>Musterzeugnis erstellen und speichern</string>
-   </property>
-  </action>
-  <action name="actionNoSupplementaryExam">
-   <property name="text">
-    <string>-- keine mündliche Ergänzungsprüfung --</string>
-   </property>
-  </action>
-  <action name="actionPlanningASoftwareProduct">
-   <property name="text">
-    <string>Planen eines Softwareproduktes</string>
-   </property>
-  </action>
-  <action name="actionDevelopmentAndImplementationOfAlgorithms">
-   <property name="text">
-    <string>Entwicklung und Umsetzung von Algorithmen</string>
-   </property>
-  </action>
-  <action name="actionEconomicsAndSocialStudies">
-   <property name="text">
-    <string>Wirtschafts- und Sozialkunde</string>
+    <string>Yellow</string>
    </property>
   </action>
  </widget>
@@ -1360,11 +1142,6 @@
   <tabstop>numFe2_1</tabstop>
   <tabstop>numFe2_2</tabstop>
   <tabstop>numFe2_3</tabstop>
-  <tabstop>tbtnSupplementary</tabstop>
-  <tabstop>numFe2_supplementary</tabstop>
-  <tabstop>numFe2_out</tabstop>
-  <tabstop>numFe2_7</tabstop>
-  <tabstop>numFe2_8</tabstop>
  </tabstops>
  <resources/>
  <connections/>

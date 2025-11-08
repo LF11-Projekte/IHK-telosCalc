@@ -75,12 +75,22 @@ class DataManager:
 
         self.fe2_PlanningAndImplementingASoftwareProduct_Score: int = int(math.ceil(0.5 * oral_score + 0.5 * written_score))
         self.fe2_PlanningAndImplementingASoftwareProduct_Grade: float | None = DataManager.calc_grade(self.fe2_PlanningAndImplementingASoftwareProduct_Score)
+        self.overall_average_grade: float | None = math.ceil( \
+            2 * DataManager._float(self.fe1_ItWorkstation_Grade) +
+            2 * DataManager._float(self.fe2_PlanningASoftwareProduct_Grade) +
+            2 * DataManager._float(self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade) +
+            2 * DataManager._float(self.fe2_EconomicsAndSocialStudies_Grade) +
+            2 * DataManager._float(self.fe2_PlanningAndImplementingASoftwareProduct_Grade) \
+        ) / 10.0
     
 
     @staticmethod
     def _int(value: int | None) -> int:
         return value if value is not None else 0
 
+    @staticmethod
+    def _float(value: float | None) -> float:
+        return value if value is not None else 0.0
 
     @staticmethod
     def calc_grade(score: int | None) -> Optional[float]:
