@@ -48,33 +48,48 @@ class DataManager:
 
 
     def handle_supplementary_exam(self):
-
         if self.fe2_OralSupplementaryExaminationSubject == "PlanningASoftwareProduct":
-            self.fe2_PlanningASoftwareProduct = DataManager._int(self.calc_supplementary_score(
+            self.fe2_1 = DataManager._int(self.calc_supplementary_score(
                 self.fe2_OralSupplementaryExamination, self.fe2_PlanningASoftwareProduct))
             
         elif self.fe2_OralSupplementaryExaminationSubject == "DevelopmentAndImplementationOfAlgorithms":
-            self.fe2_DevelopmentAndImplementationOfAlgorithms = DataManager._int(self.calc_supplementary_score(
+            self.fe2_2 = DataManager._int(self.calc_supplementary_score(
                 self.fe2_OralSupplementaryExamination, self.fe2_DevelopmentAndImplementationOfAlgorithms))
             
         elif self.fe2_OralSupplementaryExaminationSubject == "EconomicsAndSocialStudies":
-            self.fe2_EconomicsAndSocialStudies = DataManager._int(self.calc_supplementary_score(
+            self.fe2_3 = DataManager._int(self.calc_supplementary_score(
                 self.fe2_OralSupplementaryExamination, self.fe2_EconomicsAndSocialStudies))
 
 
     def calculate_all_grades(self):
+        
+        self.fe2_1 = self.fe2_PlanningASoftwareProduct
+        self.fe2_2 = self.fe2_DevelopmentAndImplementationOfAlgorithms
+        self.fe2_3 = self.fe2_EconomicsAndSocialStudies
+
         self.handle_supplementary_exam()
 
         self.fe1_ItWorkstation_Grade: float | None = self.calc_grade(self.fe1_ItWorkstation)
-        self.fe2_PlanningASoftwareProduct_Grade: float | None = self.calc_grade(self.fe2_PlanningASoftwareProduct)
-        self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade: float | None = self.calc_grade(self.fe2_DevelopmentAndImplementationOfAlgorithms)
-        self.fe2_EconomicsAndSocialStudies_Grade: float | None = self.calc_grade(self.fe2_EconomicsAndSocialStudies)
+        self.fe2_PlanningASoftwareProduct_Grade: float | None = self.calc_grade(self.fe2_1)
+        self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade: float | None = self.calc_grade(self.fe2_2)
+        self.fe2_EconomicsAndSocialStudies_Grade: float | None = self.calc_grade(self.fe2_3)
 
         oral_score: float = float(self.fe2_PlanningAndImplementingASoftwareProduct_Oral)
         written_score: float = float(self.fe2_PlanningAndImplementingASoftwareProduct_Written)
 
         self.fe2_PlanningAndImplementingASoftwareProduct_Score: int = int(math.ceil(0.5 * oral_score + 0.5 * written_score))
         self.fe2_PlanningAndImplementingASoftwareProduct_Grade: float | None = DataManager.calc_grade(self.fe2_PlanningAndImplementingASoftwareProduct_Score)
+        scores = \
+            10 * DataManager._int(self.fe2_1) + \
+            10 * DataManager._int(self.fe2_2) + \
+            10 * DataManager._int(self.fe2_3) + \
+            25 * int(oral_score) + 25 * int(written_score)
+        
+        self.overall_score: int = int(math.ceil(0.01 * float(20 * DataManager._int(self.fe1_ItWorkstation) + scores)))
+        self.overall_grade: float | None = DataManager.calc_grade(self.overall_score)
+        self.fe2_score: int = int(math.ceil(0.0125 * float(scores)))
+        self.fe2_grade: float | None = DataManager.calc_grade(self.fe2_score)
+        
         self.overall_average_grade: float | None = math.ceil( \
             2 * DataManager._float(self.fe1_ItWorkstation_Grade) +
             2 * DataManager._float(self.fe2_PlanningASoftwareProduct_Grade) +
@@ -88,9 +103,11 @@ class DataManager:
     def _int(value: int | None) -> int:
         return value if value is not None else 0
 
+
     @staticmethod
     def _float(value: float | None) -> float:
         return value if value is not None else 0.0
+
 
     @staticmethod
     def calc_grade(score: int | None) -> Optional[float]:
@@ -112,16 +129,37 @@ class DataManager:
             if fist is not None and supplementary is not None \
             else None
 
+
+    def may_take_supplementary_exam(self) -> List[Literal["PlanningASoftwareProduct", "DevelopmentAndImplementationOfAlgorithms", "EconomicsAndSocialStudies"]]:
+        # Wenn es bestehbar wird!!!! TODO: Ergänzen um die Bedingung, dass die Prüfung bestanden werden kann
+        # und die Note in dem Fach 4.5 oder schlechter ist
+
+        eligible_subjects: List[Literal["PlanningASoftwareProduct", "DevelopmentAndImplementationOfAlgorithms", "EconomicsAndSocialStudies"]] = []
+
+        if self.fe2_PlanningASoftwareProduct_Grade is not None and self._float(self.calc_grade(self.fe2_PlanningASoftwareProduct)) >= 4.5:
+            eligible_subjects.append("PlanningASoftwareProduct")
+
+        if self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade is not None and self._float(self.calc_grade(self.fe2_DevelopmentAndImplementationOfAlgorithms)) >= 4.5:
+            eligible_subjects.append("DevelopmentAndImplementationOfAlgorithms")
+
+        if self.fe2_EconomicsAndSocialStudies_Grade is not None and self._float(self.calc_grade(self.fe2_EconomicsAndSocialStudies)) >= 4.5:
+            eligible_subjects.append("EconomicsAndSocialStudies")
+
+        return eligible_subjects
+    
+
     def has_passed(self) -> bool:
+        fe2_grades = [
+            self.fe2_PlanningASoftwareProduct_Grade,
+            self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade,
+            self.fe2_EconomicsAndSocialStudies_Grade,
+            self.fe2_PlanningAndImplementingASoftwareProduct_Grade]
         return \
             True if \
-            self.fe1_ItWorkstation_Grade is not None and self.fe1_ItWorkstation_Grade < 4.5 and \
-            self.fe2_PlanningASoftwareProduct_Grade is not None and self.fe2_PlanningASoftwareProduct_Grade < 4.5 and \
-            self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade is not None and self.fe2_DevelopmentAndImplementationOfAlgorithms_Grade < 4.5 and \
-            self.fe2_EconomicsAndSocialStudies_Grade is not None and self.fe2_EconomicsAndSocialStudies_Grade < 4.5 and \
-            self.fe2_PlanningAndImplementingASoftwareProduct_Grade is not None and self.fe2_PlanningAndImplementingASoftwareProduct_Grade < 4.5 and \
-            self.fe2_PlanningAndImplementingASoftwareProduct_Oral is not None and self.fe2_PlanningAndImplementingASoftwareProduct_Oral > 48 and \
-            self.fe2_PlanningAndImplementingASoftwareProduct_Written is not None and self.fe2_PlanningAndImplementingASoftwareProduct_Written > 48 \
+                self.overall_grade is not None and self.overall_grade < 4.5 and  \
+                self.fe2_grade is not None and self.fe2_grade < 4.5 and \
+                len([x for x in fe2_grades if x is not None and x >= 4.5]) <= 1 and \
+                len([x for x in fe2_grades if x is not None and x >= 5.5]) == 0 \
             else False
 
 

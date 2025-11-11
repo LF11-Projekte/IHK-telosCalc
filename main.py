@@ -3,20 +3,22 @@ import os, sys
 from typing import Literal
 
 # TODO: Generate "Zeugnis"
-#from PyQt6.QtCore import pyqtSlot
-from PySide6.QtUiTools import QUiLoader
-from PySide6.QtCore import QCoreApplication, Slot, Qt
-from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QWidget
-#from PyQt6.uic import loadUi
+# TODO: Save configuration
+from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QWidget
+from PyQt6.uic.load_ui import loadUi
 from qt_material import apply_stylesheet
 
-import DataManager, TTS
+import DataManager
+from Config import Config
+from TTS import TTS
 
-GUI_FILENAMES = {"de": "de_DE.ui", "en": "en_GB.ui"}
-LANGUAGE: Literal["de", "en"] = "de"
-GUI_FILENAME = GUI_FILENAMES[LANGUAGE]
-DECIMAL_SEPARATOR = lambda : {"de": ",", "en": "."}[LANGUAGE]
-GRADE_AVERAGE_TEXT = lambda : {"de": "Durchschnittsnote: ", "en": "Average grade: "}[LANGUAGE]
+CONFIGURATION = "telosCalc.conf"
+DECIMAL_SEPARATOR = lambda : {"de": ",", "en": "."}[Config.LANGUAGE]
+MSG_FILTER = lambda : {"de" : "Alle Typen (*);;JSON (*.json)", "en": "All types (*);;JSON (*.json)"}[Config.LANGUAGE]
+MSG_LOAD_FILE = lambda : {"de" : "Bitte Eingabeparameterdatei auswählen", "en": "Please select a file to load input data from . . ."}[Config.LANGUAGE]
+MSG_SAVE_FILE = lambda : {"de" : "Bitte Eingabeparameter in Datei speichern", "en": "Please save the input data to a file . . ."}[Config.LANGUAGE]
+GRADE_AVERAGE_TEXT = lambda : {"de": "Durchschnittsnote: ", "en": "Average grade: "}[Config.LANGUAGE]
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 app = None
 
@@ -24,15 +26,18 @@ app = None
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
-        self.loader = QUiLoader()
-        print(os.path.join(SCRIPT_DIR, GUI_FILENAME))
-        self.ui : QWidget = self.loader.load(os.path.join(SCRIPT_DIR, GUI_FILENAME), None)
-        self.ui.show()
+        self.ui : QWidget = loadUi(os.path.join(SCRIPT_DIR, Config.GUI_SRC[Config.LANGUAGE]), None)
+
+        self._oralSupplementaryExaminationEnabled: bool = False
+        self._selectedSupplementaryExam: Literal["PlanningASoftwareProduct", "DevelopmentAndImplementationOfAlgorithms", "EconomicsAndSocialStudies"] | None = None
+
         self._initialize_actions()
         self.connect_slots()
+
         self.dataManager = DataManager.DataManager(0,0,0,0,0,0,0, None)
-        self.dataManager.calculate_all_grades()
+        self.dataManager.calculate_all_grades()  
         self.set_ui_values_by_data_manager()
+        self.ui.show()
 
 
     def load_ui_values_to_data_manager(self):
@@ -43,19 +48,29 @@ class MainWindow(QMainWindow):
             fe2_EconomicsAndSocialStudies=self.ui.numFe2_3.value(),
             fe2_PlanningAndImplementingASoftwareProduct_Oral=self.ui.numFe2_8.value(),
             fe2_PlanningAndImplementingASoftwareProduct_Written=self.ui.numFe2_7.value(),
-            fe2_OralSupplementaryExamination=None,
-            fe2_OralSupplementaryExaminationSubject=None
+            fe2_OralSupplementaryExamination=self.ui.numFe2_supplementary.value(),
+            fe2_OralSupplementaryExaminationSubject=self._selectedSupplementaryExam
         )
 
 
     def set_ui_values_by_data_manager(self):
+
+        if len(self.dataManager.may_take_supplementary_exam()):
+            self._switchOralSupplementaryExamination(True)
+        else:
+            self._switchOralSupplementaryExamination(False)
+            self.dataManager.fe2_OralSupplementaryExamination = 0
+            self.dataManager.fe2_OralSupplementaryExaminationSubject = None
+
         self.ui.numFe1.setValue(self.dataManager.fe1_ItWorkstation) 
         self.ui.numFe2_1.setValue(self.dataManager.fe2_PlanningASoftwareProduct) 
         self.ui.numFe2_2.setValue(self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms) 
         self.ui.numFe2_3.setValue(self.dataManager.fe2_EconomicsAndSocialStudies) 
         self.ui.numFe2_7.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Written) 
         self.ui.numFe2_8.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Oral) 
-        self.ui.numFe2_out.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Score) 
+        self.ui.numFe2_out.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Score)
+        self.ui.numFe2_supplementary.setValue(self.dataManager.fe2_OralSupplementaryExamination)
+
 
         if self.dataManager.fe1_ItWorkstation_Grade:
             self.ui.lblFe1Output.setText(str(self.dataManager.fe1_ItWorkstation_Grade).replace(".", DECIMAL_SEPARATOR()))
@@ -71,6 +86,32 @@ class MainWindow(QMainWindow):
         self.set_success()
 
 
+    def _enable_eligible_supplementary_exams(self, eligible_exams):
+        if self._selectedSupplementaryExam in eligible_exams: eligible_exams.remove(self._selectedSupplementaryExam)
+
+        self.ui.actionPlanningASoftwareProduct.setEnabled(
+            self._oralSupplementaryExaminationEnabled and "PlanningASoftwareProduct" in eligible_exams)
+        self.ui.actionDevelopmentAndImplementationOfAlgorithms.setEnabled(
+            self._oralSupplementaryExaminationEnabled and "DevelopmentAndImplementationOfAlgorithms" in eligible_exams)
+        self.ui.actionEconomicsAndSocialStudies.setEnabled(
+            self._oralSupplementaryExaminationEnabled and "EconomicsAndSocialStudies" in eligible_exams)
+        self.ui.actionNoSupplementaryExam.setEnabled(self._oralSupplementaryExaminationEnabled and self._selectedSupplementaryExam is not None)
+
+
+    def _switchOralSupplementaryExamination(self, is_enabled: bool):
+        if self._oralSupplementaryExaminationEnabled == is_enabled: pass
+        self._oralSupplementaryExaminationEnabled = is_enabled
+        self.ui.tbtnSupplementary.setEnabled(self._oralSupplementaryExaminationEnabled)
+        #self.ui.numFe2_supplementary.setEnabled(self._oralSupplementaryExaminationEnabled)
+
+        eligible_exams = self.dataManager.may_take_supplementary_exam()
+        self._enable_eligible_supplementary_exams(eligible_exams)
+
+        if not self._oralSupplementaryExaminationEnabled:
+            self.ui.numFe2_supplementary.setValue(0)
+            return
+
+
     def set_success(self):
         passed = self.dataManager.has_passed()
         self.ui.lblSuccessPassed.setHidden(not passed)
@@ -78,53 +119,69 @@ class MainWindow(QMainWindow):
         self.ui.lblAverageGrade.setText(f"{GRADE_AVERAGE_TEXT()}{str(self.dataManager.overall_average_grade).replace('.', DECIMAL_SEPARATOR())}")
 
 
-    @Slot()
+    @pyqtSlot()
     def on_numValue_changed(self):
         self.load_ui_values_to_data_manager()
         self.set_ui_values_by_data_manager()
 
-    @Slot()
+
+    @pyqtSlot()
     def set_stylesheet(self, stylesheet_file: str, action_element: QWidget):
+        Config.STYLE = stylesheet_file
         apply_stylesheet(app, f"{stylesheet_file}.xml")
         self.enable_all_styles()
         action_element.setEnabled(False)
 
 
-    @Slot()
+    @pyqtSlot()
     def load_from_file_action(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, 
-                                                  caption="Eingabeparameter aus Datei laden",
-                                                  filter="Alle Typen (*);;JSON (*.json)")
+        fileName, _ = QFileDialog.getOpenFileName(
+            self, caption=MSG_LOAD_FILE(), filter=MSG_FILTER())
         if fileName:
             self._disconnect_number_slots()
             self.dataManager.loadFromFile(fileName)
             self.dataManager.calculate_all_grades()
+            self._selectedSupplementaryExam = self.dataManager.fe2_OralSupplementaryExaminationSubject
             self.set_ui_values_by_data_manager()
             self._connect_number_slots()
 
-    @Slot()
+
+    @pyqtSlot()
     def save_to_file_action(self):
-        fileName, _ = QFileDialog.getSaveFileName(self,
-                                                  caption="Eingabeparameter in Datei speichern",
-                                                  filter="Alle Typen (*);;JSON (*.json)")
+        fileName, _ = QFileDialog.getSaveFileName(
+            self, caption=MSG_SAVE_FILE(), filter=MSG_FILTER())
         if fileName:
             self.dataManager.saveToFile(fileName)
 
+
     def say(self):
-        TTS.TTS.speak("Hello, this is a test.", language="fr-fr")
-        TTS.TTS.speak("Hallo, dies ist ein Test.", language="de-de")
+        TTS.speak("Hello, this is a test.", language="fr-fr")
+        TTS.speak("Hallo, dies ist ein Test.", language="de-de")
+
 
     def change_ui_file(self, language: Literal["de", "en"]):
         self.disconnect_slots()
-        global LANGUAGE; LANGUAGE = language
+        Config.LANGUAGE = language
         position = self.ui.pos()
         old_ui = self.ui
-        self.ui = self.loader.load(os.path.join(SCRIPT_DIR, GUI_FILENAMES[LANGUAGE]), None)
+        self.ui = loadUi(os.path.join(SCRIPT_DIR, Config.GUI_SRC[Config.LANGUAGE]), None)
         self.ui.move(position)
-        self.ui.show()
-        old_ui.close()
         self._initialize_actions()
         self.connect_slots()
+        self.set_ui_values_by_data_manager()
+        self.ui.show()
+        old_ui.close()
+
+
+    def set_supplementary_exam(self, exam: Literal["PlanningASoftwareProduct", "DevelopmentAndImplementationOfAlgorithms", "EconomicsAndSocialStudies"] | None, element):
+        self.dataManager.fe2_OralSupplementaryExaminationSubject = exam
+        self._selectedSupplementaryExam = exam
+        exams = self.dataManager.may_take_supplementary_exam()
+        self._enable_eligible_supplementary_exams(exams)
+        self.ui.numFe2_supplementary.setEnabled(exam is not None)
+        if exam is None: self.ui.numFe2_supplementary.setValue(0)
+        element.setEnabled(False)
+        self.load_ui_values_to_data_manager()
         self.set_ui_values_by_data_manager()
 
 
@@ -136,7 +193,15 @@ class MainWindow(QMainWindow):
             self.ui.numFe2_2,
             self.ui.numFe2_3,
             self.ui.numFe2_7,
-            self.ui.numFe2_8
+            self.ui.numFe2_8,
+            self.ui.numFe2_supplementary
+        ]
+
+        self._supplementaryExamActions = [
+            (self.ui.actionNoSupplementaryExam,                       lambda : self.set_supplementary_exam(None, self.ui.actionNoSupplementaryExam)),
+            (self.ui.actionPlanningASoftwareProduct,                  lambda : self.set_supplementary_exam("PlanningASoftwareProduct", self.ui.actionPlanningASoftwareProduct)),
+            (self.ui.actionDevelopmentAndImplementationOfAlgorithms,  lambda : self.set_supplementary_exam("DevelopmentAndImplementationOfAlgorithms", self.ui.actionDevelopmentAndImplementationOfAlgorithms)),
+            (self.ui.actionEconomicsAndSocialStudies,                 lambda : self.set_supplementary_exam("EconomicsAndSocialStudies", self.ui.actionEconomicsAndSocialStudies))
         ]
 
         self._appearanceActions = [
@@ -160,14 +225,14 @@ class MainWindow(QMainWindow):
             ( self.ui.actionBrightYellow, lambda : self.set_stylesheet("light_yellow", self.ui.actionBrightYellow) )
         ]
 
-        self._miscallaneousActions = [
+        self._miscellaneousActions = [
             ( self.ui.actionLoad, self.load_from_file_action ),
             ( self.ui.actionSave, self.save_to_file_action ),
             ( self.ui.actionEnglish, lambda: self.change_ui_file("en") ),
             ( self.ui.actionGerman, lambda: self.change_ui_file("de") ),
         ]
 
-        self._triggeredActions = self._appearanceActions + self._miscallaneousActions
+        self._triggeredActions = self._appearanceActions + self._miscellaneousActions + self._supplementaryExamActions
 
 
     def enable_all_styles(self):
@@ -200,15 +265,18 @@ class MainWindow(QMainWindow):
 
 
 def main():
-    global app
-    QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+    #global app
+    Config.load(CONFIGURATION)
     app = QApplication(sys.argv)
-    window = MainWindow()
+    
 
     # from qt_material
-    apply_stylesheet(app, "dark_teal.xml")
+    apply_stylesheet(app, f"{Config.STYLE}.xml")
+    window = MainWindow()
 
-    sys.exit(app.exec())
+    res = app.exec()
+    Config.save(CONFIGURATION)
+    sys.exit(res)
 
 if __name__ == "__main__":
     main()
