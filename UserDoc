@@ -1,7 +1,27 @@
 # Deutsch 
 
-## Installationsprozess
+## Erstellungsprozess
 
+Im CMD.EXE:
+```cmd
+python -m venv .venv
+.\.venv\Scripts\activate.bat
+```
+
+In PowerShell.exe
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Für alle:
+```cmd
+pip install -r requirements.txt
+pip install pyinstaller     # Um eine .exe / .bin / &c. zu builden
+pyinstall main.spec
+```
+
+Die .EXE befindet sich dann im ./dist Ordner.
 
 ## Sprachausgabe 
 
@@ -15,13 +35,6 @@ Der Nutzer muss die Sprachausgabe lediglich in der Menübar der Applikation akti
 
 ### Sprachen
 Die Verfügbaren Sprachen sind entsprechend des Kundenwunsches Deutsch sowie Englisch. Die Sprachausgabe ist an die Ausgabe Sprache des User Interface gekoppelt. 
-
-### Funktionsweise 
-Dokumentation: https://pyttsx3.readthedocs.io/en/latest/engine.html
-
-Jede Sprachausgabe basiert auf einem angesteurten Sprachengine: Diese wiederum wird durch den User durch den pyttsx3.init() Befehl aufgerufen.
-
-Sprachausgabe mit suchfunktion in den systemsprachen
 
 
 # English
