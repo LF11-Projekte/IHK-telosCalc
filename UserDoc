@@ -3,6 +3,25 @@
 ## Installationsprozess
 
 
-## 
+## Sprachausgabe 
+
+### Auswahl der Python-Bibliothek der Sprachausgabe
+Die Sprachausgabe ist eine Kundenanforderung. Wir entschideden uns für die Bibliothek pyttsx3, da sie, im gegensatz zu den meisten anderen Alternativen, auch isoliert von Application Programming Interfaces funktioniert. Dementsprechend ist sie auch Offline verfügbar. Zudem unerstützt pyttsx3 cross Platforming. 
+
+### Nutzer Bedienung
+Der Nutzer muss die Sprachausgabe lediglich in der Menübar der Applikation aktivieren um sprachunterstützung zu zu erhalten.
+
+*scrrenshot*
+
+### Sprachen
+Die Verfügbaren Sprachen sind entsprechend des Kundenwunsches Deutsch sowie Englisch. Die Sprachausgabe ist an die Ausgabe Sprache des User Interface gekoppelt. 
+
+### Funktionsweise 
+Dokumentation: https://pyttsx3.readthedocs.io/en/latest/engine.html
+
+Jede Sprachausgabe basiert auf einem angesteurten Sprachengine: Diese wiederum wird durch den User durch den pyttsx3.init() Befehl aufgerufen.
+
+Sprachausgabe mit suchfunktion in den systemsprachen
+
 
 # English
