@@ -49,10 +49,10 @@ class TTS:
         normalized = TTS._normalize_text_for_tts(text, language)
 
         # Print normalized text for debugging / verification
-        try:
-            print(f"[TTS] speaking (lang={language}): {normalized}")
-        except Exception:
-            pass
+        #try:
+        #    print(f"[TTS] speaking (lang={language}): {normalized}")
+        #except Exception:
+        #    pass
 
         # Run TTS in background thread to avoid blocking UI
         def speak_async():

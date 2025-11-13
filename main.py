@@ -14,6 +14,7 @@ import DataManager
 from HoverEventFilter import HoverEventFilter
 from Config import Config
 from TTS import TTS
+from PyQt6.QtCore import QEvent, QObject
 
 CONFIGURATION = "telosCalc.conf"
 DECIMAL_SEPARATOR = lambda : {"de": ",", "en": "."}[Config.LANGUAGE]
@@ -104,7 +105,6 @@ class MainWindow(QMainWindow):
         if self._oralSupplementaryExaminationEnabled == is_enabled: pass
         self._oralSupplementaryExaminationEnabled = is_enabled
         self.ui.tbtnSupplementary.setEnabled(self._oralSupplementaryExaminationEnabled)
-        #self.ui.numFe2_supplementary.setEnabled(self._oralSupplementaryExaminationEnabled)
 
         eligible_exams = self.dataManager.may_take_supplementary_exam()
         self._enable_eligible_supplementary_exams(eligible_exams)
@@ -162,28 +162,30 @@ class MainWindow(QMainWindow):
 
     def _speak_text(self, text: str):
         """Speak the given text using TTS in the current language."""
-        print(f"Config.SPEECH_ON: {Config.SPEECH_ON}")
+        #print(f"Config.SPEECH_ON: {Config.SPEECH_ON}")
         if not Config.SPEECH_ON: return
 
         language = "de-de" if Config.LANGUAGE == "de" else "en-us"
         try:
             TTS.speak(text, language=language)
         except Exception as e:
-            print(f"[TTS-ERROR] {e}")
+            #print(f"[TTS-ERROR] {e}")
+            pass
 
     def _stop_tts(self):
         """Stop current TTS playback immediately."""
         try:
             TTS.stop()
         except Exception as e:
-            print(f"[TTS-STOP-ERROR] {e}")
+            #print(f"[TTS-STOP-ERROR] {e}")
+            pass
 
     def _toggle_speech_and_sync_button(self):
         """Toggle speech output and sync the Announce Grades button state."""
         Config.toggle_speech_on()
         # Update button enabled state
-        if self._announce_button:
-            self._announce_button.setEnabled(Config.SPEECH_ON)
+        if self.ui.btnAnnounceGrades:
+            self.ui.btnAnnounceGrades.setEnabled(Config.SPEECH_ON)
 
 
     def change_ui_file(self, language: Literal["de", "en"]):
@@ -245,7 +247,8 @@ class MainWindow(QMainWindow):
                 except Exception:
                     # If QShortcut isn't available we still support F10 via
                     # keyPressEvent override (see MainWindow.keyPressEvent)
-                    print("[MENU-SHORTCUT-INIT] QShortcut unavailable; using keyPressEvent fallback")
+                    #print("[MENU-SHORTCUT-INIT] QShortcut unavailable; using keyPressEvent fallback")
+                    pass
 
                 # Speak menu titles and actions on hover (works with keyboard nav)
                 for top_action in menu_bar.actions():
@@ -257,7 +260,8 @@ class MainWindow(QMainWindow):
                             # speak each submenu/action when hovered (keyboard or mouse)
                             act.hovered.connect(lambda aa=act: (self._stop_tts(), self._speak_text(aa.text().replace('&', ''))))
         except Exception as e:
-            print(f"[MENU-TTS-INIT-ERROR] {e}")
+            #print(f"[MENU-TTS-INIT-ERROR] {e}")
+            pass
 
 
         # Install hover event filters on all number fields
@@ -278,6 +282,11 @@ class MainWindow(QMainWindow):
             field.installEventFilter(hover_filter)
             self._hoverFilters.append(hover_filter)
 
+        hover_filter = HoverEventFilter("btnAnnounceGrades", self.ui.lblAnnounce, self._speak_text, self._stop_tts)
+        self.ui.btnAnnounceGrades.installEventFilter(hover_filter)
+        self._hoverFilters.append(hover_filter)
+        self.ui.btnAnnounceGrades.pressed.connect(self._announce_grades)
+        
         # Keep a mapping from field widget -> label widget for announcements
         self._fieldLabelMap = { field: label_widget for name, field, label_widget in field_configs }
 
@@ -324,16 +333,6 @@ class MainWindow(QMainWindow):
 
         self._triggeredActions = self._appearanceActions + self._miscellaneousActions + self._supplementaryExamActions
 
-        # Connect the "Announce grades" button from the UI
-        try:
-            self._announce_button = getattr(self.ui, 'btnAnnounceGrades', None)
-            if self._announce_button:
-                self._announce_button.clicked.connect(self._announce_grades)
-                # Set initial enabled state based on Config.SPEECH_ON
-                self._announce_button.setEnabled(Config.SPEECH_ON)
-        except Exception as e:
-            print(f"[ANNOUNCE-BUTTON-CONNECT-ERROR] {e}")
-
 
     def enable_all_styles(self):
         for action, _ in self._appearanceActions:
@@ -355,7 +354,8 @@ class MainWindow(QMainWindow):
             if actions:
                 menu_bar.setActiveAction(actions[0])
         except Exception as e:
-            print(f"[MENU-FOCUS-ERROR] {e}")
+            #print(f"[MENU-FOCUS-ERROR] {e}")
+            pass
 
     def _announce_grades(self):
         """Collect grades and announce them via TTS (localized)."""
@@ -484,14 +484,16 @@ class MainWindow(QMainWindow):
                 try:
                     self._announce_grades()
                 except Exception as e:
-                    print(f"[ANNOUNCE-GRADES-ERROR] {e}")
+                    #print(f"[ANNOUNCE-GRADES-ERROR] {e}")
+                    pass
                 return
             # Enter/Return -> if a number field is focused, announce its points
             if a0 is not None and (a0.key() == Qt.Key.Key_Return or a0.key() == Qt.Key.Key_Enter):
                 try:
                     self._announce_current_field_value()
                 except Exception as e:
-                    print(f"[ANNOUNCE-FIELD-ERROR] {e}")
+                    #print(f"[ANNOUNCE-FIELD-ERROR] {e}")
+                    pass
                 return
         except Exception:
             pass

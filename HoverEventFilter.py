@@ -19,7 +19,7 @@ class HoverEventFilter(QObject):
         if self.label_widget and self.tts_callback:
             label_text = self.label_widget.text()
             if label_text:
-                print(f"[TTS-HOVER] {self.field_name}: {label_text}")
+                #print(f"[TTS-HOVER] {self.field_name}: {label_text}")
                 self.tts_callback(label_text)
 
     def eventFilter(self, a0: QObject | None, a1: QEvent | None) -> bool:
@@ -27,17 +27,17 @@ class HoverEventFilter(QObject):
             # Track hover events with 1-second delay for TTS
             if a1.type() == QEvent.Type.Enter:
                 self.is_hovered = True
-                print(f"[HOVER] {self.field_name}: entered (TTS in 1s...)")
+                #print(f"[HOVER] {self.field_name}: entered (TTS in 1s...)")
                 self.hover_timer.start(1000)  # 1 second delay
             elif a1.type() == QEvent.Type.Leave:
                 self.is_hovered = False
                 self.hover_timer.stop()  # Cancel TTS if mouse leaves
-                print(f"[HOVER] {self.field_name}: left")
+                #print(f"[HOVER] {self.field_name}: left")
             
             # Track focus events (Tab, click, or setFocus()) - immediate TTS
             elif a1.type() == QEvent.Type.FocusIn:
                 self.is_focused = True
-                print(f"[FOCUS] {self.field_name}: focused")
+                #print(f"[FOCUS] {self.field_name}: focused")
                 # Stop any ongoing TTS from other fields
                 if self.tts_stop_callback:
                     self.tts_stop_callback()
@@ -45,7 +45,7 @@ class HoverEventFilter(QObject):
                 if self.label_widget and self.tts_callback:
                     label_text = self.label_widget.text()
                     if label_text:
-                        print(f"[TTS-FOCUS] {self.field_name}: {label_text}")
+                        #print(f"[TTS-FOCUS] {self.field_name}: {label_text}")
                         self.tts_callback(label_text)
             elif a1.type() == QEvent.Type.FocusOut:
                 self.is_focused = False
@@ -53,7 +53,7 @@ class HoverEventFilter(QObject):
                 # Clear text selection when focus leaves
                 if hasattr(a0, 'lineEdit') and a0.lineEdit():  # type: ignore
                     a0.lineEdit().deselect()  # type: ignore
-                print(f"[FOCUS] {self.field_name}: focus lost")
+                #print(f"[FOCUS] {self.field_name}: focus lost")
         
         return super().eventFilter(a0, a1)
     

@@ -1095,6 +1095,25 @@
      <iconset theme="QIcon::ThemeIcon::AudioVolumeHigh"/>
     </property>
    </widget>
+   <widget class="QLabel" name="lblAnnounce">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>690</y>
+      <width>0</width>
+      <height>0</height>
+     </rect>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::InputMethodHint::ImhNone</set>
+    </property>
+    <property name="text">
+     <string>Noten ansagen. Leertaste drücken, um jetzt Noten ansagen zu lassen</string>
+    </property>
+    <property name="buddy">
+     <cstring>btnAnnounceGrades</cstring>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
