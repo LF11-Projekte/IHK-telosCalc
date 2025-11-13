@@ -304,7 +304,7 @@ class MainWindow(QMainWindow):
 
 
 def main():
-    #global app
+    global app
     Config.load(CONFIGURATION)
     app = QApplication(sys.argv)
     
@@ -319,3 +319,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

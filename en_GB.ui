@@ -131,7 +131,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Einrichten eines IT-gestützten Arbeitsplatzes</string>
+         <string>Setting up an IT-supported workplace</string>
         </property>
         <property name="buddy">
          <cstring>numFe1</cstring>
