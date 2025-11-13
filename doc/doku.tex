@@ -1,0 +1,159 @@
+\documentclass[
+a4paper,
+12pt
+]{scrartcl}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[oldstylenums,largesmallcaps,nomath]{kpfonts}
+
+\usepackage[ngerman]{babel}
+
+\usepackage[ngerman]{babel}
+\usepackage[german=guillemets]{csquotes}
+\usepackage{xpatch}
+\usepackage{hyphenat}
+
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+\usepackage{microtype}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{framed}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{soul}
+
+\geometry{margin=2.5cm}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	urlcolor=blue,
+	pdftitle={telosCalc — Nutzerdokumentation},
+	pdfauthor={telosCalc Team}
+}
+
+% Farben & Styles
+\definecolor{accent}{HTML}{2A4B7C}
+\definecolor{hintbg}{HTML}{F2F7FB}
+\definecolor{hintborder}{HTML}{D6E6F4}
+\newenvironment{hintbox}{\begin{framed}\noindent\color{black}\setlength{\FrameSep}{8pt}\setlength{\FrameRule}{0.6pt}\definecolor{shadecolor}{named}{hintbg}}{\end{framed}}
+
+\subject{\so{Nutzerdokumentation}}
+\subtitle{ -- \\ Das \textsc{IHK}-Notenberechnungstool für Fachinformatiker}
+\title{\Huge \textsc{telosCalc}}
+\author{Karl Jahn \and Damian Carstens \and Kai Weißenborn}
+\date{\today}
+
+
+\begin{document}
+	\maketitle
+	
+	\begin{center}
+		\textbf{Kurzbeschreibung:} \textsc{telosCalc} ist ein Tool zur Berechnung der \textsc{IHK}-Abschlussprüfungsnoten von Fachinformatikern für Fachinformatiker im Bereich der Anwendungsentwicklung entwickelt. Es handelt sich dabei primär um eine Desktop-Anwendung auf Windows. Experimentell ist es aber auch möglich auf \texttt{macOS}- oder \texttt{Linux}-Systemen zu arbeiten.  Dieses Handbuch richtet sich an Endnutzer und enthält Installations-, Bedienungs- und Troubleshooting-Hinweise.
+	\end{center}
+	
+	\bigskip
+	\tableofcontents
+	\newpage
+
+	
+	\section{Systemvoraussetzungen}
+	\begin{itemize}
+		\item Windows 10 oder neuer (für die mitgelieferte \texttt{telosCalc.exe})
+		\item Optional: Python 3.8+ wenn aus dem Quellcode gestartet wird, bzw. man das Tool auf \texttt{Linux} oder \texttt{MacOS} ausführen möchte.
+	\end{itemize}
+	
+	\section{Installation \& Start}
+	\subsection*{Ausführung der EXE}
+	\begin{enumerate}
+		\item Kopiere \texttt{telosCalc.exe} in ein Verzeichnis deiner Wahl.
+		\item Doppelklick zum Starten. Bei der Erstausführung wird im gleichen Verzeichnis eine Konfigurationsdatei\ (\texttt{telosCalc.conf}) erstellt. Diese wird jedes mal beim Starten der \texttt{tesloCalc.exe} eingelesen. Die Einstellungen werden dann geladen, s.\,d. die gleiche Konfiguration wie beim letzten Schließen der Anwendung geladen wird. Entsprechend wird die Datei bei jeden Schließvorgang mit den aktuellen Einstellung überschrieben. 
+	\end{enumerate}
+	
+	\subsection*{Aus dem Quellcode (optional)}
+	\begin{enumerate}
+		\item Python 3.8+ installieren.
+		\item Virtuelles Environment erzeugen: \texttt{python -m venv venv} und aktivieren: \texttt{.\\.venv\\Scripts\\activate}.
+		\item Abhängigkeiten installieren: \texttt{pip install -r requirements.txt}
+		\item \underline{Anwendung starten:} \texttt{python main.py}\\[.65em]\emph{oder}:\\[.65em] \underline{Anwendung kompilieren:}
+		Mittels \texttt{pip install pyinstaller \&\& pyinstaller main.spec}. Zuvor kann eine Zielarchitektur in der \texttt{main.spec} festgelegt werden. Wurde keine festgelegt wird automatisch die aktuelle (des ausführenden Systemes) verwendet.
+	\end{enumerate}
+	
+	%\begin{hintbox}
+	%	\textbf{Tipp:} Für Debugging starte die Anwendung aus der Konsole (\texttt{python main.py}), so siehst du Fehlermeldungen und Logging-Ausgaben direkt.
+	%\end{hintbox}
+	
+	\section{Bedienung der GUI}
+	
+	Die Menüleiste (siehe Abbildung~\ref{fig:menu}) die Optionen \texttt{Datei}, \texttt{Sprache}, \texttt{Erscheinungsbild} und \texttt{Hilfe}. Die Optionen, welche in \texttt{Hilfe} befindlich sind, werden noch nicht angesteuert.
+	
+	\begin{figure}[H]
+		\centering
+		\fbox{\includegraphics[width=0.75\linewidth]{img/menu.png}}
+		\caption{Menüleiste / Eingabeparameter-In- \& Export}
+		\label{fig:menu}
+	\end{figure}
+	
+	\subsection{Farbschema (\texttt{Erscheinungsbild})}
+	Die Oberfläche gibt es in verschiedenen Farbschemata je in einer hellen und dunklen Version. Auswählbar sind diese über \texttt{Menüleiste > Erscheinungsbild > \{hell / dunkel\} > \{Farbe\}} (siehe Abbildung~\ref{fig:color}). In Abbildung \ref{fig:dark} kann man auch ein dunkles Farbschema sehen.
+	
+	\begin{figure}[H]
+		\centering
+		\begin{minipage}{.5\textwidth}
+			\centering
+			\fbox{\includegraphics[width=0.75\linewidth]{img/light-modes.png}}
+			\captionof{figure}{Verfügbare Erscheinungs-\\bilder}
+			\label{fig:color}
+		\end{minipage}%	
+		\begin{minipage}{.5\textwidth}
+			\centering
+			\fbox{\includegraphics[width=0.75\linewidth]{img/lang-dark.png}}
+			\captionof{figure}{Dunkles Erscheinungsbild / Sprachoptionen}
+			\label{fig:dark}
+		\end{minipage}
+	\end{figure}
+	
+	 Unter \texttt{Sprache} kann man zwischen der deutschen und englischen Variante der Anwendung wechseln (siehe Abbildung \ref{fig:dark}). Die \texttt{Checkbox} links neben der Sprache zeigt an, welche gewählt wurde. Zudem gibt es ebenda die Option \texttt{Sprachausgabe}. Mehr dazu in Abschnitt \ref{sprachausg}.
+	
+	\subsection{Eingabeparameter}
+	Die Eingaben können unter \texttt{Datei > \{Eingabeparameter laden / Eingabeparameter speichern\}} (siehe Abbildung~\ref{fig:menu}) gespeichert, resp. geladen werden. Dabei werden alle Eingaben in den Punktefeldern im \texttt{JSON}-Format abgespeichert. Beim Laden werden alle vorherigen Eingaben mit den neuen Werten aus der \texttt{JSON}-Datei überschrieben.
+	
+	\subsection{Sprachausgabe \& Accessibility} \label{sprachausg}
+	Mit der Option Sprachausgabe kann eine Audioausgabe zur Navigationshilfe aktiviert werden. Dabei wird beim "Mit-der-Maus-Hovern" über Elementen in der Regel ein Text angesagt. Ebenfalls beim Wechseln der GUI-Elemente mittels der Tabstopp-Taste. Der Button \texttt{Noten Ansagen} wird zudem auch aktiviert. Bei dem Klicken auf dem Button werden alle Zwischennoten, der Gesamtnotendurchschnitt und das Prüfungsergebnis (also ob die Prüfung bestanden wurde) in der ausgewählten Zielsprache angesagt.
+	
+	Es kann durch alle Elemente, die zur Bedienung notwendig sind mittels der Tabulator-Taste "gegangen" werden. In das obere Menü gelangt man mittels der Alt-Taste -- in diesem kann man mit Pfeil-, Leer, und Tabstopp-Taste navigieren und Elemente mit [ENTER] bestätigen / auswählen.
+	
+	\section{Notenberechnung}
+	
+	Die Notenberechnung erfolgt nach den offiziellen Kriterien, welche aus der Ausbildungsordnung, den BBiG und offiziellen IHK-Informationen zu entnehmen sind. Konkret folgt die Berechnung ob bestanden oder nicht bestanden wurde den folgenden Ablauf:\\[1em]
+	
+	\includegraphics[width=\textwidth]{img/criteria.png}\\[.5em]
+	
+	Die Auswahl der mündlichen Ergänzungsprüfung kann man erst dann ansteuern, resp. bedienen, wenn man für eine solche in Frage kommt. Denn erst dann kann man das vorgesehene Auswahlelement des Prüfungsfaches mittels der Tabulator-Taste ansteuern und mittels der Leertaste expandieren (oder man klickt mit der Maus auf den rechten Pfeil). Es öffnet sich ein Menü in welchen man das infrage kommende Prüfungsfach auswählen kann (ungültige sind ausgegraut). Der Vorgang lässt sich in Abbildung~\ref{fig:mep} nachvollziehen. Erst wenn eine gültige mündliche Ergänzungsprüfung ausgewählt wurde, lässt sich auch ein entsprechender Punktestand eintragen.
+	
+	
+	\begin{figure}[h]
+		\centering
+		\fbox{\includegraphics[width=0.55\linewidth]{img/mep.png}}
+		\caption{Mündliche Ergänzungsprüfung}
+		\label{fig:mep}
+	\end{figure}
+	
+	
+	\section{Fehlerbehebung}
+	\begin{description}
+		\item[Programm startet nicht:] Prüfe Antivirus/SmartScreen; versuche als Administrator zu starten.
+		\item[Konfigurationsfehler:] \texttt{telosCalc.conf} umbenennen/löschen; App neu starten (es wird eine Standarddatei erzeugt).
+		\item[TTS funktioniert nicht:] Starte aus dem Quellcode; prüfe Konsolenmeldungen und installiere fehlende Pakete.
+	\end{description}
+	
+	
+\end{document}
