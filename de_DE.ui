@@ -1044,7 +1044,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; color:#aa0000;&quot;&gt;Die Prüfung wurde &lt;/span&gt;&lt;span style=&quot; font-size:10pt; font-weight:700; color:#aa0000;&quot;&gt;nicht&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#aa0000;&quot;&gt; bestanden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000;&quot;&gt;Die Prüfung wurde &lt;/span&gt;&lt;span style=&quot; font-size:10pt; font-weight:700; color:#ff0000;&quot;&gt;nicht&lt;/span&gt;&lt;span style=&quot; font-size:10pt; color:#ff0000;&quot;&gt; bestanden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <widget class="QLabel" name="lblAverageGrade">

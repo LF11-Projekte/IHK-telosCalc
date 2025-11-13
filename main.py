@@ -1,11 +1,13 @@
 # pyright: reportAttributeAccessIssue=false
 import os, sys
 from typing import Literal
+#import random
+import subprocess
 
 # TODO: Generate "Zeugnis"
 # TODO: Save configuration
 from PyQt6.QtCore import pyqtSlot, Qt
-from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QWidget
+from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QWidget, QMessageBox
 from PyQt6.uic.load_ui import loadUi
 from PyQt6.QtGui import QKeySequence
 from qt_material import apply_stylesheet
@@ -202,6 +204,17 @@ class MainWindow(QMainWindow):
         old_ui.close()
 
 
+    def show_info_messagebox(self):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Icon.Information)
+        msg.setText("telosCalc.exe")
+        msg.setInformativeText((lambda : {"de": "Version: 1.0\nLetztes Release 2025-11-13\nAutoren: Karl Jahn, Damian Carstens, Kai Weißenborn",
+                                          "en": "Version: 1.0\nLast Release 2025-11-13\nAuthors: Karl Jahn, Damian Carstens, Kai Weißenborn"}[Config.LANGUAGE])())
+        msg.setWindowTitle((lambda : {"de": "Informationen über die Anwendung", "en": "Information about the application"}[Config.LANGUAGE])())
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        retval = msg.exec()
+
+
     def set_supplementary_exam(self, exam: Literal["PlanningASoftwareProduct", "DevelopmentAndImplementationOfAlgorithms", "EconomicsAndSocialStudies"] | None, element):
         self.dataManager.fe2_OralSupplementaryExaminationSubject = exam
         self._selectedSupplementaryExam = exam
@@ -328,7 +341,9 @@ class MainWindow(QMainWindow):
             ( self.ui.actionSave, self.save_to_file_action ),
             ( self.ui.actionEnglish, lambda: self.change_ui_file("en") ),
             ( self.ui.actionGerman, lambda: self.change_ui_file("de") ),
-            ( self.ui.actionVoiceOutput, self._toggle_speech_and_sync_button )
+            ( self.ui.actionVoiceOutput, self._toggle_speech_and_sync_button ),
+            ( self.ui.actionAbout, self.show_info_messagebox),
+            ( self.ui.actionOpenDocs,  lambda : subprocess.Popen(f".\\doc\\{  (lambda: {"de": "de_DE", "en" : "en_GB"}[Config.LANGUAGE])() }.pdf", shell=True) )
         ]
 
         self._triggeredActions = self._appearanceActions + self._miscellaneousActions + self._supplementaryExamActions
@@ -361,17 +376,28 @@ class MainWindow(QMainWindow):
         """Collect grades and announce them via TTS (localized)."""
         lang = Config.LANGUAGE
         # Localized labels
+        
+        assults = [
+            "Mal ist man der Hund, mal ist man der Baum.",
+            "Man kann nicht immer der Held sein, manchmal ist man der Statist im Hintergrund.",
+            "Manche Menschen lernen aus Fehlern, du scheinst sie zu sammeln.",
+            "Keine Sorge, der Tiefpunkt ist erreicht – jetzt geht’s nur noch bergauf … oder bergab, je nachdem, wie man's sieht",
+            "Glückwunsch, du hast den Beweis geliefert, dass Intelligenz optional ist.",
+            "Prüfung nicht bestanden? Keine Panik, man kann auch später Millionär werden … als Reality-TV-Star.",
+            "Herzlichen Glückwunsch! Du hast es geschafft, mehr zu scheitern als erwartet."
+        ]
+
         labels = {
             'de': {
-                'title': 'Noten',
+                'title': 'Noten . . ',
                 'fe1': 'Einrichten eines IT-gestützten Arbeitsplatzes. ',
                 'fe2_1': 'Planen eines Softwareproduktes. ',
                 'fe2_2': 'Entwicklung und Umsetzung von Algorithmen. ',
                 'fe2_3': 'Wirtschaft und Sozialkunde. ',
                 'fe2_proj': 'Planen und Umsetzen eines Softwareprojektes. ',
-                'average': 'Durchschnitts-Notä. ',      # Er würde anstatt "Durchschnittsnote" "Durchschnittsnot" sagen "Durchschnitts-Notä" klingt dem eigentlichen Wort am nächsten
+                'average': 'Durchschnitts-Nohte. ',      # Er würde anstatt "Durchschnittsnote" "Durchschnittsnot" sagen "Durchschnitts-Notä" klingt dem eigentlichen Wort am nächsten
                 'passed': 'Die Prüfung wurde damit bestanden. Herzlichen Glückwunsch!',
-                'failed': 'Prüfung wurde damit nicht bestanden. Mal ist man der Hund, mal ist man der Baum',
+                'failed': 'Prüfung wurde damit nicht bestanden. Mal ist man der Hund, mal ist man der Baum . . . Ha .  Ha .  Ha',
                 'na': 'nicht vorhanden'
             },
             'en': {
