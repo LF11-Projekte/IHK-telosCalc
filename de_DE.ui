@@ -1076,6 +1076,25 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:700; color:#00aa00;&quot;&gt;Die Prüfung wurde bestanden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="btnAnnounceGrades">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>650</y>
+      <width>160</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::FocusPolicy::StrongFocus</enum>
+    </property>
+    <property name="text">
+     <string>Noten ansagen</string>
+    </property>
+    <property name="icon">
+     <iconset theme="QIcon::ThemeIcon::AudioVolumeHigh"/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -1149,7 +1168,6 @@
    <addaction name="menuAppearence"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoad">
    <property name="text">
     <string>Eingabeparameter laden</string>

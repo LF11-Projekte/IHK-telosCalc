@@ -7,6 +7,7 @@ from typing import Literal
 from PyQt6.QtCore import pyqtSlot, Qt
 from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QWidget
 from PyQt6.uic.load_ui import loadUi
+from PyQt6.QtGui import QKeySequence
 from qt_material import apply_stylesheet
 
 import DataManager
@@ -177,6 +178,13 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(f"[TTS-STOP-ERROR] {e}")
 
+    def _toggle_speech_and_sync_button(self):
+        """Toggle speech output and sync the Announce Grades button state."""
+        Config.toggle_speech_on()
+        # Update button enabled state
+        if self._announce_button:
+            self._announce_button.setEnabled(Config.SPEECH_ON)
+
 
     def change_ui_file(self, language: Literal["de", "en"]):
         self.disconnect_slots()
@@ -216,6 +224,41 @@ class MainWindow(QMainWindow):
             self.ui.numFe2_supplementary
         ]
 
+        # Make menu bar keyboard-accessible and provide TTS feedback
+        try:
+            menu_bar = getattr(self.ui, 'menuBar', None)
+            if menu_bar:
+                # Some UI objects expose menuBar as a method; call it if so.
+                if callable(menu_bar):
+                    menu_bar = menu_bar()
+
+                menu_bar.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+
+                # F10 focuses the menu bar (common convention). Some PyQt6
+                # builds don't expose QShortcut as expected, so use a fallback
+                # that creates an QAction with a shortcut when QShortcut is
+                # unavailable.
+                try:
+                    from PyQt6.QtWidgets import QShortcut
+                    shortcut = QShortcut(QKeySequence('F10'), self)
+                    shortcut.activated.connect(lambda mb=menu_bar: self._focus_menubar(mb))
+                except Exception:
+                    # If QShortcut isn't available we still support F10 via
+                    # keyPressEvent override (see MainWindow.keyPressEvent)
+                    print("[MENU-SHORTCUT-INIT] QShortcut unavailable; using keyPressEvent fallback")
+
+                # Speak menu titles and actions on hover (works with keyboard nav)
+                for top_action in menu_bar.actions():
+                    # speak top-level menu title when highlighted
+                    top_action.hovered.connect(lambda a=top_action: (self._stop_tts(), self._speak_text(a.text().replace('&', ''))))
+                    menu = top_action.menu()
+                    if menu:
+                        for act in menu.actions():
+                            # speak each submenu/action when hovered (keyboard or mouse)
+                            act.hovered.connect(lambda aa=act: (self._stop_tts(), self._speak_text(aa.text().replace('&', ''))))
+        except Exception as e:
+            print(f"[MENU-TTS-INIT-ERROR] {e}")
+
 
         # Install hover event filters on all number fields
         self._hoverFilters = []
@@ -234,6 +277,9 @@ class MainWindow(QMainWindow):
             hover_filter = HoverEventFilter(name, label_widget, self._speak_text, self._stop_tts)
             field.installEventFilter(hover_filter)
             self._hoverFilters.append(hover_filter)
+
+        # Keep a mapping from field widget -> label widget for announcements
+        self._fieldLabelMap = { field: label_widget for name, field, label_widget in field_configs }
 
         self.ui.tbtnSupplementary.pressed.connect(self.ui.tbtnSupplementary.showMenu)
 
@@ -273,10 +319,20 @@ class MainWindow(QMainWindow):
             ( self.ui.actionSave, self.save_to_file_action ),
             ( self.ui.actionEnglish, lambda: self.change_ui_file("en") ),
             ( self.ui.actionGerman, lambda: self.change_ui_file("de") ),
-            ( self.ui.actionVoiceOutput, Config.toggle_speech_on )
+            ( self.ui.actionVoiceOutput, self._toggle_speech_and_sync_button )
         ]
 
         self._triggeredActions = self._appearanceActions + self._miscellaneousActions + self._supplementaryExamActions
+
+        # Connect the "Announce grades" button from the UI
+        try:
+            self._announce_button = getattr(self.ui, 'btnAnnounceGrades', None)
+            if self._announce_button:
+                self._announce_button.clicked.connect(self._announce_grades)
+                # Set initial enabled state based on Config.SPEECH_ON
+                self._announce_button.setEnabled(Config.SPEECH_ON)
+        except Exception as e:
+            print(f"[ANNOUNCE-BUTTON-CONNECT-ERROR] {e}")
 
 
     def enable_all_styles(self):
@@ -290,6 +346,158 @@ class MainWindow(QMainWindow):
     def _connect_action_slots(self):
         for action, handler in self._triggeredActions:
             action.triggered.connect(handler)
+
+    def _focus_menubar(self, menu_bar):
+        """Set keyboard focus to the menu bar and activate the first menu."""
+        try:
+            menu_bar.setFocus()
+            actions = menu_bar.actions()
+            if actions:
+                menu_bar.setActiveAction(actions[0])
+        except Exception as e:
+            print(f"[MENU-FOCUS-ERROR] {e}")
+
+    def _announce_grades(self):
+        """Collect grades and announce them via TTS (localized)."""
+        lang = Config.LANGUAGE
+        # Localized labels
+        labels = {
+            'de': {
+                'title': 'Noten',
+                'fe1': 'Einrichten eines IT-gestützten Arbeitsplatzes. ',
+                'fe2_1': 'Planen eines Softwareproduktes. ',
+                'fe2_2': 'Entwicklung und Umsetzung von Algorithmen. ',
+                'fe2_3': 'Wirtschaft und Sozialkunde. ',
+                'fe2_proj': 'Planen und Umsetzen eines Softwareprojektes. ',
+                'average': 'Durchschnitts-Notä. ',      # Er würde anstatt "Durchschnittsnote" "Durchschnittsnot" sagen "Durchschnitts-Notä" klingt dem eigentlichen Wort am nächsten
+                'passed': 'Die Prüfung wurde damit bestanden. Herzlichen Glückwunsch!',
+                'failed': 'Prüfung wurde damit nicht bestanden. Mal ist man der Hund, mal ist man der Baum',
+                'na': 'nicht vorhanden'
+            },
+            'en': {
+                'title': 'Grades',
+                'fe1': 'IT workstation',
+                'fe2_1': 'Planning a Software Product',
+                'fe2_2': 'Development and Implementation of Algorithms',
+                'fe2_3': 'Economics and Social Studies',
+                'fe2_proj': 'Company Project',
+                'average': 'Average grade',
+                'passed': 'Examination passed',
+                'failed': 'Examination failed',
+                'na': 'not available'
+            }
+        }
+
+        loc = labels['de'] if lang == 'de' else labels['en']
+
+        def fmt(g):
+            if g is None:
+                return loc['na']
+            # Use comma for German decimal separator
+            s = f"{g:.1f}"
+            if lang == 'de':
+                s = s.replace('.', ',')
+            return s
+
+        parts = [f"{loc['title']}: "]
+        parts.append(f"{loc['fe1']}: {fmt(self.dataManager.fe1_ItWorkstation_Grade)}")
+        parts.append(f"{loc['fe2_1']}: {fmt(self.dataManager.fe2_PlanningASoftwareProduct_Grade)}")
+        parts.append(f"{loc['fe2_2']}: {fmt(self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms_Grade)}")
+        parts.append(f"{loc['fe2_3']}: {fmt(self.dataManager.fe2_EconomicsAndSocialStudies_Grade)}")
+        parts.append(f"{loc['fe2_proj']}: {fmt(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Grade)}")
+        avg = self.dataManager.overall_average_grade
+        parts.append(f"{loc['average']}: {fmt(avg)}")
+
+        passed = self.dataManager.has_passed()
+        parts.append(loc['passed'] if passed else loc['failed'])
+
+        # Use longer separator for better pause between grades
+        separator = ". " if lang == 'en' else ". . . "
+        text = separator.join(parts)
+        # Speak using the configured language codes
+        language = "de-de" if lang == 'de' else "en-us"
+        self._stop_tts()
+        self._speak_text(text)
+
+    def _announce_current_field_value(self):
+        """Announce the currently focused number field's point value (localized)."""
+        fw = QApplication.focusWidget()
+        # If focus widget is one of our number fields or a child, match it
+        matched_field = None
+        for f in self._fieldLabelMap.keys():
+            if fw is f:
+                matched_field = f
+                break
+
+        if matched_field is None:
+            # Try parent chain (sometimes focus is on spinbox's lineEdit)
+            p = fw
+            while p is not None:
+                if p in self._fieldLabelMap:
+                    matched_field = p
+                    break
+                p = getattr(p, 'parent', lambda: None)()
+
+        if matched_field is None:
+            # Nothing to announce
+            return
+
+        label_widget = self._fieldLabelMap.get(matched_field)
+        label_text = label_widget.text() if label_widget is not None else matched_field.objectName()
+        value = None
+        try:
+            value = matched_field.value()
+        except Exception:
+            # Fallback: try to get text
+            try:
+                value = int(matched_field.text())
+            except Exception:
+                value = None
+
+        if Config.LANGUAGE == 'de':
+            unit = 'Punkte'
+        else:
+            unit = 'points'
+
+        if value is None:
+            speak_text = f"{label_text}: { 'nicht vorhanden' if Config.LANGUAGE=='de' else 'not available' }"
+        else:
+            speak_text = f"{label_text}: {value} {unit}"
+
+        self._stop_tts()
+        self._speak_text(speak_text)
+
+    def keyPressEvent(self, a0):
+        """Catch F10 as fallback to focus the menu bar when QShortcut isn't
+        available in this PyQt build.
+        """
+        try:
+            if a0 is not None and a0.key() == Qt.Key.Key_F10:
+                menu_bar = getattr(self.ui, 'menuBar', None)
+                if callable(menu_bar):
+                    menu_bar = menu_bar()
+                if menu_bar:
+                    self._focus_menubar(menu_bar)
+                    return
+            # Ctrl+G -> announce grades
+            if a0 is not None and a0.key() == Qt.Key.Key_G and a0.modifiers() & Qt.KeyboardModifier.ControlModifier:
+                try:
+                    self._announce_grades()
+                except Exception as e:
+                    print(f"[ANNOUNCE-GRADES-ERROR] {e}")
+                return
+            # Enter/Return -> if a number field is focused, announce its points
+            if a0 is not None and (a0.key() == Qt.Key.Key_Return or a0.key() == Qt.Key.Key_Enter):
+                try:
+                    self._announce_current_field_value()
+                except Exception as e:
+                    print(f"[ANNOUNCE-FIELD-ERROR] {e}")
+                return
+        except Exception:
+            pass
+
+        # Delegate to base class for other keys
+        return super().keyPressEvent(a0)
 
     def connect_slots(self):
         self._connect_number_slots()

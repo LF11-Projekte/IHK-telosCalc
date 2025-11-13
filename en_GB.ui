@@ -1076,6 +1076,25 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:700; color:#00aa00;&quot;&gt;The exam has been passed.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="btnAnnounceGrades">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>650</y>
+      <width>160</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::FocusPolicy::StrongFocus</enum>
+    </property>
+    <property name="text">
+     <string>Announce grades</string>
+    </property>
+    <property name="icon">
+     <iconset theme="QIcon::ThemeIcon::AudioVolumeHigh"/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -1092,7 +1111,6 @@
     </property>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
-    <addaction name="actionSampleCertificate"/>
    </widget>
    <widget class="QMenu" name="menuLanguage">
     <property name="title">
@@ -1334,11 +1352,6 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionSampleCertificate">
-   <property name="text">
-    <string>Musterzeugnis erstellen und speichern</string>
-   </property>
-  </action>
   <action name="actionNoSupplementaryExam">
    <property name="text">
     <string>-- no oral supplementary exam --</string>
@@ -1364,7 +1377,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Speech output</string>
+    <string>Voice output</string>
    </property>
   </action>
  </widget>
