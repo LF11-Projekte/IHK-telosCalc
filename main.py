@@ -291,8 +291,8 @@ class MainWindow(QMainWindow):
         self._fieldLabelMap = { field: label_widget for name, field, label_widget in field_configs }
 
         self.ui.tbtnSupplementary.pressed.connect(self.ui.tbtnSupplementary.showMenu)
-
         self.ui.actionVoiceOutput.setChecked(Config.SPEECH_ON)
+        self.ui.btnAnnounceGrades.setEnabled(Config.SPEECH_ON)
 
 
         self._supplementaryExamActions = [

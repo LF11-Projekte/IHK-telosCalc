@@ -31,7 +31,7 @@ class TTS:
             out = re.sub(r"\bIT\b|IT(?=-)", "I T", out, flags=re.IGNORECASE)
         elif lang.startswith('de'):
             # German UI but prefer English letter names: expand to explicit
-            out = re.sub(r"\bIT\b|IT(?=-)", "ay ti", out, flags=re.IGNORECASE)
+            out = re.sub(r"\bIT\b|IT(?=-)", "ay-ti", out, flags=re.IGNORECASE)
 
         return out
 
@@ -40,7 +40,7 @@ class TTS:
 
         # Stop any previous speech before starting new one
         TTS.stop()
-
+        #language = "fr-fr"
         language_code = TTS._language_codes.get(language, "en-gb")
         if not language_code:
             raise ValueError(f"Language '{language}' not supported.")
