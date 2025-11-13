@@ -4,12 +4,13 @@ from typing import Literal
 
 # TODO: Generate "Zeugnis"
 # TODO: Save configuration
-from PyQt6.QtCore import pyqtSlot
+from PyQt6.QtCore import pyqtSlot, Qt
 from PyQt6.QtWidgets import QApplication, QFileDialog, QMainWindow, QWidget
 from PyQt6.uic.load_ui import loadUi
 from qt_material import apply_stylesheet
 
 import DataManager
+from HoverEventFilter import HoverEventFilter
 from Config import Config
 from TTS import TTS
 
@@ -158,6 +159,21 @@ class MainWindow(QMainWindow):
         TTS.speak("Hello, this is a test.", language="fr-fr")
         TTS.speak("Hallo, dies ist ein Test.", language="de-de")
 
+    def _speak_text(self, text: str):
+        """Speak the given text using TTS in the current language."""
+        language = "de-de" if Config.LANGUAGE == "de" else "en-us"
+        try:
+            TTS.speak(text, language=language)
+        except Exception as e:
+            print(f"[TTS-ERROR] {e}")
+
+    def _stop_tts(self):
+        """Stop current TTS playback immediately."""
+        try:
+            TTS.stop()
+        except Exception as e:
+            print(f"[TTS-STOP-ERROR] {e}")
+
 
     def change_ui_file(self, language: Literal["de", "en"]):
         self.disconnect_slots()
@@ -196,6 +212,29 @@ class MainWindow(QMainWindow):
             self.ui.numFe2_8,
             self.ui.numFe2_supplementary
         ]
+
+
+        # Install hover event filters on all number fields
+        self._hoverFilters = []
+        field_configs = [
+            ("numFe1", self.ui.numFe1, self.ui.lblDescr1),
+            ("numFe2_1", self.ui.numFe2_1, self.ui.lblDescr2),
+            ("numFe2_2", self.ui.numFe2_2, self.ui.lblDescr3),
+            ("numFe2_3", self.ui.numFe2_3, self.ui.lblDescr3_2),
+            ("numFe2_7", self.ui.numFe2_7, self.ui.lblDescr3_5),
+            ("numFe2_8", self.ui.numFe2_8, self.ui.lblDescr3_6),
+            ("numFe2_supplementary", self.ui.numFe2_supplementary, self.ui.label),
+        ]
+        for name, field, label_widget in field_configs:
+            hover_filter = HoverEventFilter(name, label_widget, self._speak_text, self._stop_tts)
+            field.installEventFilter(hover_filter)
+            self._hoverFilters.append(hover_filter)
+
+        # Make QToolButton keyboard-accessible (Tab + Enter/Space to open menu)
+        #self.ui.tbtnSupplementary.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        # Connect button click to show menu (works with Tab + Space/Enter via pressed signal)
+        self.ui.tbtnSupplementary.pressed.connect(self.ui.tbtnSupplementary.showMenu)
+
 
         self._supplementaryExamActions = [
             (self.ui.actionNoSupplementaryExam,                       lambda : self.set_supplementary_exam(None, self.ui.actionNoSupplementaryExam)),

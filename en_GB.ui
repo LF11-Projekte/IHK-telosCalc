@@ -1100,6 +1100,8 @@
     </property>
     <addaction name="actionGerman"/>
     <addaction name="actionEnglish"/>
+    <addaction name="separator"/>
+    <addaction name="actionVoiceOutput"/>
    </widget>
    <widget class="QMenu" name="menuAppearence">
     <property name="title">
@@ -1355,6 +1357,14 @@
   <action name="actionEconomicsAndSocialStudies">
    <property name="text">
     <string>Economics and Social Studies</string>
+   </property>
+  </action>
+  <action name="actionVoiceOutput">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Speech output</string>
    </property>
   </action>
  </widget>
