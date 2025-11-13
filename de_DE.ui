@@ -1092,7 +1092,6 @@
     </property>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
-    <addaction name="actionSampleCertificate"/>
    </widget>
    <widget class="QMenu" name="menuLanguage">
     <property name="title">

@@ -161,6 +161,9 @@ class MainWindow(QMainWindow):
 
     def _speak_text(self, text: str):
         """Speak the given text using TTS in the current language."""
+        print(f"Config.SPEECH_ON: {Config.SPEECH_ON}")
+        if not Config.SPEECH_ON: return
+
         language = "de-de" if Config.LANGUAGE == "de" else "en-us"
         try:
             TTS.speak(text, language=language)
@@ -216,6 +219,7 @@ class MainWindow(QMainWindow):
 
         # Install hover event filters on all number fields
         self._hoverFilters = []
+
         field_configs = [
             ("numFe1", self.ui.numFe1, self.ui.lblDescr1),
             ("numFe2_1", self.ui.numFe2_1, self.ui.lblDescr2),
@@ -225,15 +229,15 @@ class MainWindow(QMainWindow):
             ("numFe2_8", self.ui.numFe2_8, self.ui.lblDescr3_6),
             ("numFe2_supplementary", self.ui.numFe2_supplementary, self.ui.label),
         ]
+
         for name, field, label_widget in field_configs:
             hover_filter = HoverEventFilter(name, label_widget, self._speak_text, self._stop_tts)
             field.installEventFilter(hover_filter)
             self._hoverFilters.append(hover_filter)
 
-        # Make QToolButton keyboard-accessible (Tab + Enter/Space to open menu)
-        #self.ui.tbtnSupplementary.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        # Connect button click to show menu (works with Tab + Space/Enter via pressed signal)
         self.ui.tbtnSupplementary.pressed.connect(self.ui.tbtnSupplementary.showMenu)
+
+        self.ui.actionVoiceOutput.setChecked(Config.SPEECH_ON)
 
 
         self._supplementaryExamActions = [
@@ -269,6 +273,7 @@ class MainWindow(QMainWindow):
             ( self.ui.actionSave, self.save_to_file_action ),
             ( self.ui.actionEnglish, lambda: self.change_ui_file("en") ),
             ( self.ui.actionGerman, lambda: self.change_ui_file("de") ),
+            ( self.ui.actionVoiceOutput, Config.toggle_speech_on )
         ]
 
         self._triggeredActions = self._appearanceActions + self._miscellaneousActions + self._supplementaryExamActions

@@ -8,6 +8,9 @@ class Config:
     STYLE: str = "dark_lightgreen"
     SPEECH_ON: bool = False
 
+    @staticmethod
+    def toggle_speech_on() -> None:
+        Config.SPEECH_ON = not Config.SPEECH_ON
 
     @staticmethod
     def save(conf_file: str) -> None:
