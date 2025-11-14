@@ -24,7 +24,9 @@ MSG_FILTER = lambda : {"de" : "Alle Typen (*);;JSON (*.json)", "en": "All types 
 MSG_LOAD_FILE = lambda : {"de" : "Bitte Eingabeparameterdatei auswählen", "en": "Please select a file to load input data from . . ."}[Config.LANGUAGE]
 MSG_SAVE_FILE = lambda : {"de" : "Bitte Eingabeparameter in Datei speichern", "en": "Please save the input data to a file . . ."}[Config.LANGUAGE]
 GRADE_AVERAGE_TEXT = lambda : {"de": "Durchschnittsnote: ", "en": "Average grade: "}[Config.LANGUAGE]
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DOC_FILE = lambda : os.path.join(SCRIPT_DIR, f"{(lambda: {"de": "de_DE", "en" : "en_GB"}[Config.LANGUAGE])()}.pdf")
 app = None
 
 
@@ -343,7 +345,7 @@ class MainWindow(QMainWindow):
             ( self.ui.actionGerman, lambda: self.change_ui_file("de") ),
             ( self.ui.actionVoiceOutput, self._toggle_speech_and_sync_button ),
             ( self.ui.actionAbout, self.show_info_messagebox),
-            ( self.ui.actionOpenDocs,  lambda : subprocess.Popen(f".\\doc\\{  (lambda: {"de": "de_DE", "en" : "en_GB"}[Config.LANGUAGE])() }.pdf", shell=True) )
+            ( self.ui.actionOpenDocs,  lambda : subprocess.Popen(DOC_FILE(), shell=True) )
         ]
 
         self._triggeredActions = self._appearanceActions + self._miscellaneousActions + self._supplementaryExamActions

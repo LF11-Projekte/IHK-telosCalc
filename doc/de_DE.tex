@@ -84,7 +84,7 @@ a4paper,
 		\item Virtuelles Environment erzeugen: \texttt{python -m venv .venv} und aktivieren über:\\ \texttt{.\textbackslash.venv\textbackslash{}Scripts\textbackslash{}activate}.
 		\item Abhängigkeiten installieren: \texttt{pip install -r requirements.txt}
 		\item \underline{Anwendung starten:} \texttt{python main.py}\\[.65em]\emph{oder}:\\[.65em] \underline{Anwendung kompilieren:}
-		Mittels \texttt{pip install pyinstaller \&\& pyinstaller main.spec}. Zuvor kann eine Zielarchitektur in der \texttt{main.spec} festgelegt werden. Wurde keine festgelegt, wird automatisch die aktuelle (des ausführenden Systemes) verwendet.
+		Mittels \texttt{pip install pyinstaller \&\& pyinstaller main.spec}. Zuvor kann eine Zielarchitektur\footnote{Hierzu die Variable \texttt{target\_arch} anpassen (Möglichkeiten: \texttt{x86\_64}, \texttt{arm64} oder \texttt{universal2}), weiter Informationen bzgl. des \texttt{pyinstaller}s sind hier findbar: \url{https://pyinstaller.org}} in der \texttt{main.spec} festgelegt werden. Wurde keine festgelegt, wird automatisch die aktuelle (des ausführenden Systemes) verwendet.
 	\end{enumerate}
 	
 	%\begin{hintbox}
@@ -97,25 +97,25 @@ a4paper,
 	
 	\begin{figure}[H]
 		\centering
-		\fbox{\includegraphics[width=0.75\linewidth]{img/menu.png}}
+		\fbox{\includegraphics[width=0.80\linewidth]{img/menu.png}}
 		\caption{Menüleiste / Eingabeparameter-In- \& Export}
 		\label{fig:menu}
 	\end{figure}
 	
 	\subsection{Farbschema (\texttt{Erscheinungsbild})}
-	Die Oberfläche gibt es in verschiedenen Farbschemata je in einer hellen und dunklen Version. Auswählbar sind diese über \texttt{Menüleiste > Erscheinungsbild > \{hell / dunkel\} > \{Farbe\}} (siehe Abbildung~\ref{fig:color}). In Abbildung \ref{fig:dark} kann man auch ein dunkles Farbschema sehen.
+	Die Oberfläche gibt es in verschiedenen Farbschemata je in einer hellen und dunklen Version. Auswählbar sind diese über \texttt{Menüleiste > Erscheinungsbild > \{hell / dunkel\} > \{Farbe\}} (siehe Abbildung~\ref{fig:color}). In der Abbildung \ref{fig:dark} kann man auch ein dunkles Farbschema sehen.
 	
 	\begin{figure}[H]
 		\centering
 		\begin{minipage}{.5\textwidth}
 			\centering
-			\fbox{\includegraphics[width=0.75\linewidth]{img/light-modes.png}}
+			\fbox{\includegraphics[width=0.90\linewidth]{img/light-modes.png}}
 			\captionof{figure}{Verfügbare Erscheinungs-\\bilder}
 			\label{fig:color}
 		\end{minipage}%	
 		\begin{minipage}{.5\textwidth}
 			\centering
-			\fbox{\includegraphics[width=0.75\linewidth]{img/lang-dark.png}}
+			\fbox{\includegraphics[width=0.90\linewidth]{img/lang-dark.png}}
 			\captionof{figure}{Dunkles Erscheinungsbild / Sprachoptionen}
 			\label{fig:dark}
 		\end{minipage}
@@ -127,9 +127,9 @@ a4paper,
 	Die Eingaben können unter \texttt{Datei > \{Eingabeparameter laden / Eingabeparameter speichern\}} (siehe Abbildung~\ref{fig:menu}) gespeichert, resp. geladen werden. Dabei werden alle Eingaben in den Punktefeldern im \texttt{JSON}-Format abgespeichert. Beim Laden werden alle vorherigen Eingaben mit den neuen Werten aus der \texttt{JSON}-Datei überschrieben.
 	
 	\subsection{Sprachausgabe \& Accessibility} \label{sprachausg}
-	Mit der Option Sprachausgabe kann eine Audioausgabe zur Navigationshilfe aktiviert werden. Dabei wird beim "Mit-der-Maus-Hovern" über Elementen in der Regel ein Text angesagt. Ebenfalls beim Wechseln der \textsc{GUI}-Elemente mittels der \texttt{Tabstopp}-Taste. Der Button \texttt{Noten Ansagen} wird zudem auch aktiviert. Bei dem Klicken auf dem Button werden alle Zwischennoten, der Gesamtnotendurchschnitt und das Prüfungsergebnis (also ob die Prüfung bestanden wurde) in der ausgewählten Zielsprache angesagt.
+	Mit der Option Sprachausgabe kann eine Audioausgabe zur Navigationshilfe aktiviert werden. Dabei wird beim "Mit-der-Maus-Hovern" über Elementen in der Regel ein Text angesagt. Ebenfalls beim Wechseln der \textsc{GUI}-Elemente mittels der \texttt{Tab}-Taste. Der Button \texttt{Noten Ansagen} wird zudem auch aktiviert. Bei dem Klicken auf dem Button werden alle Zwischennoten, der Gesamtnotendurchschnitt und das Prüfungsergebnis (also ob die Prüfung bestanden wurde) in der ausgewählten Zielsprache angesagt.
 	
-	Es kann durch alle Elemente, die zur Bedienung notwendig sind mittels der Tabulator-Taste "gegangen" werden. In das obere Menü gelangt man mittels der \texttt{[Alt]}-Taste -- in diesem kann man mit Pfeil-, Leer, und \texttt{Tabstopp}-Taste navigieren und Elemente mit \texttt{[ENTER]} bestätigen / auswählen. Mit der \texttt{[ESC]}-Taste kann man das obere Menü wieder verlassen.
+	Es kann durch alle Elemente, die zur Bedienung notwendig sind mittels der Tabulator-Taste "gegangen" werden. In das obere Menü gelangt man mittels der \texttt{Alt}-Taste -- in diesem kann man mit Pfeil-, Leer, und \texttt{Tabulator}-Taste navigieren und Elemente mit \texttt{Enter} bestätigen / auswählen. Mit der \texttt{Esc}-Taste kann man das obere Menü wieder verlassen.
 	
 	\section{Notenberechnung}
 	
@@ -152,7 +152,7 @@ a4paper,
 	\begin{description}
 		\item[Programm startet nicht:] Überprüfung Antivirus/SmartScreen; Ausführung als Administrator
 		\item[Konfigurationsfehler:] \texttt{telosCalc.conf} umbenennen/löschen; App ggf. neu starten
-		\item[TTS funktioniert nicht:] Starte aus dem Quellcode; Überprüfung der Konsolenmeldungen, ggf. Nachinstallation fehlender Pakete
+		\item[TTS funktioniert nicht:] Starten aus dem Quellcode; Überprüfung der Konsolenmeldungen, ggf. Nachinstallation fehlender Pakete. Zudem sollte man bei Windows ggf. die Spracheinstellungen überprüfen und, wenn nicht installiert, die Lokalisierungspakete für Deutsch \& Englisch nachinstallieren.
 	\end{description}
 	
 	
