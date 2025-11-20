@@ -31,6 +31,13 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DOC_FILE = lambda : os.path.join(SCRIPT_DIR, f"{(lambda: {"de": "de_DE", "en" : "en_GB"}[Config.LANGUAGE])()}.pdf")
 app = None
 
+extra = {
+    'density_scale': '2',  # Lower density (more compact layout)
+#    "QSpinBox, QDoubleSpinBox": {
+#        "color": "transparent"
+#    }
+}
+
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -47,6 +54,32 @@ class MainWindow(QMainWindow):
         self.dataManager.calculate_all_grades()
         self.set_ui_values_by_data_manager()
         self.ui.show()
+        self.ui.numFe2_supplementary.setFixedWidth(73)
+        self.ui.numFe2_supplementary.setStyleSheet("""
+        QSpinBox#numFe2_supplementary {
+            padding: 2px;
+            qproperty-alignment: 'AlignCenter';
+        }""")
+        self.ui.numFe2_supplementary.setStyleSheet("""
+                QSpinBox#numFe2_supplementary {
+                    padding: 2px;
+                    qproperty-alignment: 'AlignCenter';
+                }""")
+        self.ui.numFe2_supplementary.setStyleSheet("""
+                QSpinBox#numFe2_supplementary {
+                    padding: 2px;
+                    qproperty-alignment: 'AlignCenter';
+                }""")
+        self.ui.numFe2_supplementary.setStyleSheet("""
+                QSpinBox#numFe2_supplementary {
+                    padding: 2px;
+                    qproperty-alignment: 'AlignCenter';
+                }""")
+        self.ui.numFe2_supplementary.setStyleSheet("""
+                QSpinBox#numFe2_supplementary {
+                    padding: 2px;
+                    qproperty-alignment: 'AlignCenter';
+                }""")
 
 
     def load_ui_values_to_data_manager(self):
@@ -63,6 +96,10 @@ class MainWindow(QMainWindow):
 
 
     def set_ui_values_by_data_manager(self):
+
+        #self.ui.numFe2_supplementary.setPrefix("")
+        #self.ui.numFe2_supplementary.setGeometry(336,190,73,24)
+        #print(self.ui.numFe2_supplementary.setSpecialValueText(""))
 
         if len(self.dataManager.may_take_supplementary_exam()):
             self._switchOralSupplementaryExamination(True)
@@ -108,16 +145,22 @@ class MainWindow(QMainWindow):
 
 
     def _switchOralSupplementaryExamination(self, is_enabled: bool):
-        if self._oralSupplementaryExaminationEnabled == is_enabled: pass
         self._oralSupplementaryExaminationEnabled = is_enabled
         self.ui.tbtnSupplementary.setEnabled(self._oralSupplementaryExaminationEnabled)
+        self.ui.numFe2_supplementary.setEnabled(self._oralSupplementaryExaminationEnabled and self._selectedSupplementaryExam is not None)
 
-        eligible_exams = self.dataManager.may_take_supplementary_exam()
-        self._enable_eligible_supplementary_exams(eligible_exams)
+        #print("self._oralSupplementaryExaminationEnabled: ", self._oralSupplementaryExaminationEnabled)
+        #print("self._selectedSupplementaryExam: ", self._selectedSupplementaryExam)
 
         if not self._oralSupplementaryExaminationEnabled:
             self.ui.numFe2_supplementary.setValue(0)
+            self.dataManager.fe2_OralSupplementaryExamination = None
             return
+
+        #print(self._oralSupplementaryExaminationEnabled)
+
+        eligible_exams = self.dataManager.may_take_supplementary_exam()
+        self._enable_eligible_supplementary_exams(eligible_exams)
 
 
     def set_success(self):
@@ -136,7 +179,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def set_stylesheet(self, stylesheet_file: str, action_element: QWidget):
         Config.STYLE = stylesheet_file
-        apply_stylesheet(app, f"{stylesheet_file}.xml")
+        apply_stylesheet(app, f"{stylesheet_file}.xml", extra=extra)
         self.enable_all_styles()
         action_element.setEnabled(False)
 
@@ -196,17 +239,27 @@ class MainWindow(QMainWindow):
 
 
     def change_ui_file(self, language: Literal["de", "en"]):
+        #print("change ui file")
         self.disconnect_slots()
         Config.LANGUAGE = language
-        position = self.ui.pos()
         old_ui = self.ui
+        position = self.ui.pos()
+        #print("ui: ", self.ui)
         self.ui = loadUi(os.path.join(SCRIPT_DIR, Config.GUI_SRC[Config.LANGUAGE]), None)
+        #print("new ui created")
         self.ui.move(position)
-        self._initialize_actions()
-        self.connect_slots()
+        #print("new ui moved")
         self.set_ui_values_by_data_manager()
+        #print("new ui values set")
+        self._initialize_actions()
+        #print("actions initialized")
+        self.connect_slots()
+        #print("slots connected")
+        #print("ui: ", self.ui)
         self.ui.show()
+        #print("new ui showed")
         old_ui.close()
+        #print("old ui closed")
 
 
     def show_info_messagebox(self):
@@ -361,6 +414,11 @@ class MainWindow(QMainWindow):
     def _connect_number_slots(self):
         for numField in self._numberFields:
             numField.valueChanged.connect(lambda num: self.on_numValue_changed())
+        for numField in self._numberFields:
+            numField.setStyleSheet("QSpinBox#" + numField.objectName() + """ {
+                    padding: 2px;
+                    qproperty-alignment: 'AlignCenter';
+                }""")
 
     def _connect_action_slots(self):
         for action, handler in self._triggeredActions:
@@ -554,7 +612,7 @@ def main():
 
 
     # from qt_material
-    apply_stylesheet(app, f"{Config.STYLE}.xml")
+    apply_stylesheet(app, f"{Config.STYLE}.xml", extra=extra)
     window = MainWindow()
 
     res = app.exec()
