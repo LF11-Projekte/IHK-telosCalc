@@ -1146,7 +1146,7 @@
     </property>
     <widget class="QMenu" name="menuDark">
      <property name="title">
-      <string>dunkel</string>
+      <string>Dunkel</string>
      </property>
      <addaction name="actionDarkYellow"/>
      <addaction name="actionDarkAmber"/>
@@ -1160,7 +1160,7 @@
     </widget>
     <widget class="QMenu" name="menuBright">
      <property name="title">
-      <string>hell</string>
+      <string>Hell</string>
      </property>
      <addaction name="actionBrightYellow"/>
      <addaction name="actionBrightAmber"/>

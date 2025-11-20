@@ -23,6 +23,8 @@ DECIMAL_SEPARATOR = lambda : {"de": ",", "en": "."}[Config.LANGUAGE]
 MSG_FILTER = lambda : {"de" : "Alle Typen (*);;JSON (*.json)", "en": "All types (*);;JSON (*.json)"}[Config.LANGUAGE]
 MSG_LOAD_FILE = lambda : {"de" : "Bitte Eingabeparameterdatei auswählen", "en": "Please select a file to load input data from . . ."}[Config.LANGUAGE]
 MSG_SAVE_FILE = lambda : {"de" : "Bitte Eingabeparameter in Datei speichern", "en": "Please save the input data to a file . . ."}[Config.LANGUAGE]
+MSG_LOAD_FILE_CRITICAL = lambda : {"de": "Fehler beim Öffnen der Datei", "en": "Error opening the file"}[Config.LANGUAGE]
+MSG_LOAD_FILE_CRITICAL_TEXT = lambda : {"de": "Datei konnte nicht geladen werden.\nBitte sicherstellen, dass Datei vom Programm stammt.", "en": "The file could not be loaded.\nPlease ensure that the file originates from the program."}[Config.LANGUAGE]
 GRADE_AVERAGE_TEXT = lambda : {"de": "Durchschnittsnote: ", "en": "Average grade: "}[Config.LANGUAGE]
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -42,7 +44,7 @@ class MainWindow(QMainWindow):
         self.connect_slots()
 
         self.dataManager = DataManager.DataManager(0,0,0,0,0,0,0, None)
-        self.dataManager.calculate_all_grades()  
+        self.dataManager.calculate_all_grades()
         self.set_ui_values_by_data_manager()
         self.ui.show()
 
@@ -69,12 +71,12 @@ class MainWindow(QMainWindow):
             self.dataManager.fe2_OralSupplementaryExamination = 0
             self.dataManager.fe2_OralSupplementaryExaminationSubject = None
 
-        self.ui.numFe1.setValue(self.dataManager.fe1_ItWorkstation) 
-        self.ui.numFe2_1.setValue(self.dataManager.fe2_PlanningASoftwareProduct) 
-        self.ui.numFe2_2.setValue(self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms) 
-        self.ui.numFe2_3.setValue(self.dataManager.fe2_EconomicsAndSocialStudies) 
-        self.ui.numFe2_7.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Written) 
-        self.ui.numFe2_8.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Oral) 
+        self.ui.numFe1.setValue(self.dataManager.fe1_ItWorkstation)
+        self.ui.numFe2_1.setValue(self.dataManager.fe2_PlanningASoftwareProduct)
+        self.ui.numFe2_2.setValue(self.dataManager.fe2_DevelopmentAndImplementationOfAlgorithms)
+        self.ui.numFe2_3.setValue(self.dataManager.fe2_EconomicsAndSocialStudies)
+        self.ui.numFe2_7.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Written)
+        self.ui.numFe2_8.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Oral)
         self.ui.numFe2_out.setValue(self.dataManager.fe2_PlanningAndImplementingASoftwareProduct_Score)
         self.ui.numFe2_supplementary.setValue(self.dataManager.fe2_OralSupplementaryExamination)
 
@@ -144,12 +146,17 @@ class MainWindow(QMainWindow):
         fileName, _ = QFileDialog.getOpenFileName(
             self, caption=MSG_LOAD_FILE(), filter=MSG_FILTER())
         if fileName:
-            self._disconnect_number_slots()
-            self.dataManager.loadFromFile(fileName)
-            self.dataManager.calculate_all_grades()
-            self._selectedSupplementaryExam = self.dataManager.fe2_OralSupplementaryExaminationSubject
-            self.set_ui_values_by_data_manager()
-            self._connect_number_slots()
+            try:
+                self._disconnect_number_slots()
+                self.dataManager.loadFromFile(fileName)
+                self.dataManager.calculate_all_grades()
+                self._selectedSupplementaryExam = self.dataManager.fe2_OralSupplementaryExaminationSubject
+                self.set_ui_values_by_data_manager()
+                self._connect_number_slots()
+            except Exception as e:
+                _ = QMessageBox.critical(self,
+                    MSG_LOAD_FILE_CRITICAL(),
+                    MSG_LOAD_FILE_CRITICAL_TEXT())
 
 
     @pyqtSlot()
@@ -159,10 +166,6 @@ class MainWindow(QMainWindow):
         if fileName:
             self.dataManager.saveToFile(fileName)
 
-
-    def say(self):
-        TTS.speak("Hello, this is a test.", language="fr-fr")
-        TTS.speak("Hallo, dies ist ein Test.", language="de-de")
 
     def _speak_text(self, text: str):
         """Speak the given text using TTS in the current language."""
@@ -301,7 +304,7 @@ class MainWindow(QMainWindow):
         self.ui.btnAnnounceGrades.installEventFilter(hover_filter)
         self._hoverFilters.append(hover_filter)
         self.ui.btnAnnounceGrades.pressed.connect(self._announce_grades)
-        
+
         # Keep a mapping from field widget -> label widget for announcements
         self._fieldLabelMap = { field: label_widget for name, field, label_widget in field_configs }
 
@@ -378,7 +381,7 @@ class MainWindow(QMainWindow):
         """Collect grades and announce them via TTS (localized)."""
         lang = Config.LANGUAGE
         # Localized labels
-        
+
         assults = [
             "Mal ist man der Hund, mal ist man der Baum.",
             "Man kann nicht immer der Held sein, manchmal ist man der Statist im Hintergrund.",
@@ -416,14 +419,14 @@ class MainWindow(QMainWindow):
             }
         }
 
-        loc = labels['de'] if lang == 'de' else labels['en']
+        loc = labels['de'] if Config.LANGUAGE == 'de' else labels['en']
 
         def fmt(g):
             if g is None:
                 return loc['na']
             # Use comma for German decimal separator
             s = f"{g:.1f}"
-            if lang == 'de':
+            if Config.LANGUAGE == 'de':
                 s = s.replace('.', ',')
             return s
 
@@ -442,8 +445,6 @@ class MainWindow(QMainWindow):
         # Use longer separator for better pause between grades
         separator = ". " if lang == 'en' else ". . . "
         text = separator.join(parts)
-        # Speak using the configured language codes
-        language = "de-de" if lang == 'de' else "en-us"
         self._stop_tts()
         self._speak_text(text)
 
@@ -550,7 +551,7 @@ def main():
     global app
     Config.load(CONFIGURATION)
     app = QApplication(sys.argv)
-    
+
 
     # from qt_material
     apply_stylesheet(app, f"{Config.STYLE}.xml")
