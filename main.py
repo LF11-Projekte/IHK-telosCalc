@@ -179,7 +179,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def set_stylesheet(self, stylesheet_file: str, action_element: QWidget):
         Config.STYLE = stylesheet_file
-        apply_stylesheet(app, f"{stylesheet_file}.xml", extra=extra, invert_secondary=True)
+        apply_stylesheet(app, f"{stylesheet_file}.xml", extra=extra)
         self.enable_all_styles()
         action_element.setEnabled(False)
 
@@ -266,8 +266,8 @@ class MainWindow(QMainWindow):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Icon.Information)
         msg.setText("telosCalc.exe")
-        msg.setInformativeText((lambda : {"de": "Version: 1.0\nLetztes Release 2025-11-13\nAutoren: Karl Jahn, Damian Carstens, Kai Weißenborn",
-                                          "en": "Version: 1.0\nLast Release 2025-11-13\nAuthors: Karl Jahn, Damian Carstens, Kai Weißenborn"}[Config.LANGUAGE])())
+        msg.setInformativeText((lambda : {"de": "Version: 1.1\nLetztes Release 2025-11-20\nAutoren: Karl Jahn, Damian Carstens, Kai Weißenborn",
+                                          "en": "Version: 1.1\nLast Release 2025-11-20\nAuthors: Karl Jahn, Damian Carstens, Kai Weißenborn"}[Config.LANGUAGE])())
         msg.setWindowTitle((lambda : {"de": "Informationen über die Anwendung", "en": "Information about the application"}[Config.LANGUAGE])())
         msg.setStandardButtons(QMessageBox.StandardButton.Ok)
         retval = msg.exec()
@@ -612,7 +612,7 @@ def main():
 
 
     # from qt_material
-    apply_stylesheet(app, f"{Config.STYLE}.xml", extra=extra, invert_secondary=True)
+    apply_stylesheet(app, f"{Config.STYLE}.xml", extra=extra)
     window = MainWindow()
 
     res = app.exec()
