@@ -49,15 +49,21 @@ a4paper,
 \subject{\so{Nutzerdokumentation}}
 \subtitle{ -- \\ Das \textsc{IHK}-Notenberechnungstool für Fachinformatiker}
 \title{\Huge \textsc{telosCalc}}
-\author{Karl Jahn \and Damian Carstens \and Kai Weißenborn}
+\author{Karl R. Jahn \and Damian Carstens \and Kai F. Weißenborn}
 \date{\today}
 
 
 \begin{document}
+	\thispagestyle{empty}
 	\maketitle
 	
 	\begin{center}
 		\textbf{Kurzbeschreibung:} \textsc{telosCalc} ist ein Tool zur Berechnung der \textsc{IHK}-Abschlussprüfungsnoten von Fachinformatikern für Fachinformatiker im Bereich der Anwendungsentwicklung entwickelt. Es handelt sich dabei primär um eine Desktop-Anwendung auf Windows. Experimentell ist es aber auch möglich auf \texttt{macOS}- oder \texttt{Linux}-Systemen zu arbeiten.  Dieses Handbuch richtet sich an Endnutzer und enthält Installations-, Bedienungs- und Troubleshooting-Hinweise.
+	\end{center}
+	
+	\begin{center}
+		\textbf{Hinweis:} Über geschweifte Klammern und Pipes werden verschiedene Optionen, resp. Auswahlmöglichkeiten dargestellt: \texttt{\{Option 1 | Option 2\}}. Ferner sei noch angemerkt, dass die ausführbare Windowsdatei \emph{je nach System bis zehn Sekunden und länger beim Starten zum Laden brauchen kann}.
+		
 	\end{center}
 	
 	\bigskip
@@ -75,13 +81,14 @@ a4paper,
 	\subsection*{Ausführung der EXE}
 	\begin{enumerate}
 		\item Kopieren der \texttt{telosCalc.exe} in ein beliebiges Verzeichnis
-		\item Doppelklick zum Starten. Bei der Erstausführung wird im gleichen Verzeichnis eine Konfigurationsdatei\ (\texttt{telosCalc.conf}) erstellt. Diese wird jedes mal beim Starten der \texttt{tesloCalc.exe} eingelesen. Die Einstellungen werden dann geladen, s.\,d. die gleiche Konfiguration wie beim letzten Schließen der Anwendung geladen wird. Entsprechend wird die Datei bei jeden Schließvorgang mit den aktuellen Einstellung überschrieben. 
+		\item Doppelklick zum Starten. Bei der Erstausführung wird im gleichen Verzeichnis eine Konfigurationsdatei\ (\texttt{telosCalc.conf}) erstellt. Diese wird jedes mal beim Starten der \texttt{tesloCalc.exe} eingelesen. Die Einstellungen werden dann geladen, s.\,d. die gleiche Konfiguration wie beim letzten Schließen der Anwendung geladen wird. Entsprechend wird die Datei bei jeden Schließvorgang mit den aktuellen Einstellung überschrieben.\\
+		\textit{Achtung! Das Laden der Anwendung kann \guillemotright einen Moment\guillemotleft\ dauern (vgl. Hinweise).}
 	\end{enumerate}
 	
 	\subsection*{Aus dem Quellcode (optional)}
 	\begin{enumerate}
 		\item Python 3.8+ installieren.
-		\item Virtuelles Environment erzeugen: \texttt{python -m venv .venv} und aktivieren über:\\ \texttt{.\textbackslash.venv\textbackslash{}Scripts\textbackslash{}activate}.
+		\item Virtuelles Environment erzeugen: \texttt{python -m venv .venv} und aktivieren über:\\ \texttt{.\textbackslash.venv\textbackslash{}Scripts\textbackslash{}activate\textbackslash{}\{\ .bat | .ps1 | ␣\ \}}
 		\item Abhängigkeiten installieren: \texttt{pip install -r requirements.txt}
 		\item \underline{Anwendung starten:} \texttt{python main.py}\\[.65em]\emph{oder}:\\[.65em] \underline{Anwendung kompilieren:}
 		Mittels \texttt{pip install pyinstaller \&\& pyinstaller main.spec}. Zuvor kann eine Zielarchitektur\footnote{Hierzu die Variable \texttt{target\_arch} anpassen (Möglichkeiten: \texttt{x86\_64}, \texttt{arm64} oder \texttt{universal2}), weiter Informationen bzgl. des \texttt{pyinstaller}s sind hier findbar: \url{https://pyinstaller.org}} in der \texttt{main.spec} festgelegt werden. Wurde keine festgelegt, wird automatisch die aktuelle (des ausführenden Systemes) verwendet.
@@ -151,13 +158,17 @@ a4paper,
 	
 	\section{Fehlerbehebung}
 	\begin{description}
-		\item[Programm startet nicht:] Überprüfung Antivirus/SmartScreen; Ausführung als Administrator
+		\item[Programm startet nicht:] Überprüfung Antivirus/SmartScreen; Ausführung als Administrator, ggf. Freigabe erteilen
 		\item[Konfigurationsfehler:] \texttt{telosCalc.conf} umbenennen/löschen; App ggf. neu starten
 		\item[Probleme mit TTS:] Starten aus dem Quellcode; Überprüfung der Konsolenmeldungen, ggf. Nachinstallation fehlender Pakete. Zudem sollte man bei Windows ggf. die Spracheinstellungen überprüfen und, wenn nicht installiert, die Lokalisierungspakete für Deutsch \& Englisch nachinstallieren.
 	\end{description}
 	
 	\section{Datenschutz}
 	Es müssen keine besonderen Datenschutzmaßnahmen unternommen werden, da keine personenbezogene Daten (insofern der Nutzer sie nicht speichern möchte) abgespeichert werden. Für den Datenschutz der exportierten Eingabeparameter ist der Nutzer selbst verantwortlich (im Sinne von Namenswahl und Speicherort der Datei).
+	
+	\newpage
+	\addcontentsline{toc}{section}{\listfigurename}
+	\listoffigures
 	
 	
 \end{document}
