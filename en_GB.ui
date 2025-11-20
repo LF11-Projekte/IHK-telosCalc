@@ -431,7 +431,7 @@
          <string notr="true"/>
         </property>
         <property name="suffix">
-         <string>   </string>
+         <string/>
         </property>
         <property name="maximum">
          <number>100</number>
@@ -1088,9 +1088,9 @@
    <widget class="QPushButton" name="btnAnnounceGrades">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>379</x>
       <y>650</y>
-      <width>160</width>
+      <width>211</width>
       <height>41</height>
      </rect>
     </property>
@@ -1196,7 +1196,6 @@
    <addaction name="menuAppearence"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoad">
    <property name="text">
     <string>Load input data</string>

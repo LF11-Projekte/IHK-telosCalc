@@ -179,7 +179,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def set_stylesheet(self, stylesheet_file: str, action_element: QWidget):
         Config.STYLE = stylesheet_file
-        apply_stylesheet(app, f"{stylesheet_file}.xml", extra=extra)
+        apply_stylesheet(app, f"{stylesheet_file}.xml", extra=extra, invert_secondary=True)
         self.enable_all_styles()
         action_element.setEnabled(False)
 
@@ -612,7 +612,7 @@ def main():
 
 
     # from qt_material
-    apply_stylesheet(app, f"{Config.STYLE}.xml", extra=extra)
+    apply_stylesheet(app, f"{Config.STYLE}.xml", extra=extra, invert_secondary=True)
     window = MainWindow()
 
     res = app.exec()

@@ -683,7 +683,7 @@
          <string notr="true"/>
         </property>
         <property name="suffix">
-         <string>   </string>
+         <string/>
         </property>
         <property name="prefix">
          <string/>
@@ -1100,9 +1100,9 @@
    <widget class="QPushButton" name="btnAnnounceGrades">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>379</x>
       <y>650</y>
-      <width>160</width>
+      <width>211</width>
       <height>41</height>
      </rect>
     </property>
