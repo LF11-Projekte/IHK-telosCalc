@@ -60,26 +60,6 @@ class MainWindow(QMainWindow):
             padding: 2px;
             qproperty-alignment: 'AlignCenter';
         }""")
-        self.ui.numFe2_supplementary.setStyleSheet("""
-                QSpinBox#numFe2_supplementary {
-                    padding: 2px;
-                    qproperty-alignment: 'AlignCenter';
-                }""")
-        self.ui.numFe2_supplementary.setStyleSheet("""
-                QSpinBox#numFe2_supplementary {
-                    padding: 2px;
-                    qproperty-alignment: 'AlignCenter';
-                }""")
-        self.ui.numFe2_supplementary.setStyleSheet("""
-                QSpinBox#numFe2_supplementary {
-                    padding: 2px;
-                    qproperty-alignment: 'AlignCenter';
-                }""")
-        self.ui.numFe2_supplementary.setStyleSheet("""
-                QSpinBox#numFe2_supplementary {
-                    padding: 2px;
-                    qproperty-alignment: 'AlignCenter';
-                }""")
 
 
     def load_ui_values_to_data_manager(self):
@@ -107,6 +87,7 @@ class MainWindow(QMainWindow):
             self._switchOralSupplementaryExamination(False)
             self.dataManager.fe2_OralSupplementaryExamination = 0
             self.dataManager.fe2_OralSupplementaryExaminationSubject = None
+            self.dataManager.calculate_all_grades()
 
         self.ui.numFe1.setValue(self.dataManager.fe1_ItWorkstation)
         self.ui.numFe2_1.setValue(self.dataManager.fe2_PlanningASoftwareProduct)
@@ -154,7 +135,12 @@ class MainWindow(QMainWindow):
 
         if not self._oralSupplementaryExaminationEnabled:
             self.ui.numFe2_supplementary.setValue(0)
+            self.ui.tbtnSupplementary.setText(
+                (lambda: {"de": "-- mündliche Ergänzungsprüfung auswählen --",
+                          "en": "-- choose oral supplementary exam --"}[Config.LANGUAGE])())
             self.dataManager.fe2_OralSupplementaryExamination = None
+            self.dataManager.fe2_OralSupplementaryExaminationSubject = None
+            self._selectedSupplementaryExam = None
             return
 
         #print(self._oralSupplementaryExaminationEnabled)
@@ -179,7 +165,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def set_stylesheet(self, stylesheet_file: str, action_element: QWidget):
         Config.STYLE = stylesheet_file
-        apply_stylesheet(app, f"{stylesheet_file}.xml", extra=extra)
+        apply_stylesheet(app, f"{stylesheet_file}.xml", extra=extra, invert_secondary="light_" in Config.STYLE)
         self.enable_all_styles()
         action_element.setEnabled(False)
 
@@ -239,47 +225,53 @@ class MainWindow(QMainWindow):
 
 
     def change_ui_file(self, language: Literal["de", "en"]):
-        #print("change ui file")
         self.disconnect_slots()
         Config.LANGUAGE = language
         old_ui = self.ui
         position = self.ui.pos()
-        #print("ui: ", self.ui)
         self.ui = loadUi(os.path.join(SCRIPT_DIR, Config.GUI_SRC[Config.LANGUAGE]), None)
-        #print("new ui created")
         self.ui.move(position)
-        #print("new ui moved")
         self.set_ui_values_by_data_manager()
-        #print("new ui values set")
         self._initialize_actions()
-        #print("actions initialized")
         self.connect_slots()
-        #print("slots connected")
-        #print("ui: ", self.ui)
         self.ui.show()
-        #print("new ui showed")
+
+        #if self.dataManager.fe2_OralSupplementaryExaminationSubject is None and
+        if old_ui.tbtnSupplementary.text() != (lambda : {"en": "-- mündliche Ergänzungsprüfung auswählen --", "de": "-- choose oral supplementary exam --"}[Config.LANGUAGE])():
+            self.ui.tbtnSupplementary.setText((lambda : {
+                None: {"de": "-- keine mündliche Ergänzungsprüfung --", "en": "-- no oral supplementary exam --"}[Config.LANGUAGE],
+                "PlanningASoftwareProduct": {"de": "Planen eins Softwareproduktes", "en": "Planning a Software Product"}[Config.LANGUAGE],
+                "DevelopmentAndImplementationOfAlgorithms": {"de": "Entwicklung und Umsetzung von Algorithmen", "en": "Development and Implementation of Algorithms"}[Config.LANGUAGE],
+                "EconomicsAndSocialStudies": {"de": "Wirtschafts- und Sozialkunde", "en": "Economics and Social Studies"}[Config.LANGUAGE]
+            }[self.dataManager.fe2_OralSupplementaryExaminationSubject])())
+
         old_ui.close()
-        #print("old ui closed")
 
 
     def show_info_messagebox(self):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Icon.Information)
         msg.setText("telosCalc.exe")
-        msg.setInformativeText((lambda : {"de": "Version: 1.1\nLetztes Release 2025-11-20\nAutoren: Karl Jahn, Damian Carstens, Kai Weißenborn",
-                                          "en": "Version: 1.1\nLast Release 2025-11-20\nAuthors: Karl Jahn, Damian Carstens, Kai Weißenborn"}[Config.LANGUAGE])())
+        msg.setInformativeText((lambda : {"de": "Version: 1.2\nLetztes Release 2025-11-20\nAutoren: Karl Jahn, Damian Carstens, Kai Weißenborn",
+                                          "en": "Version: 1.2\nLast Release 2025-11-20\nAuthors: Karl Jahn, Damian Carstens, Kai Weißenborn"}[Config.LANGUAGE])())
         msg.setWindowTitle((lambda : {"de": "Informationen über die Anwendung", "en": "Information about the application"}[Config.LANGUAGE])())
         msg.setStandardButtons(QMessageBox.StandardButton.Ok)
-        retval = msg.exec()
+        _ = msg.exec()
 
 
     def set_supplementary_exam(self, exam: Literal["PlanningASoftwareProduct", "DevelopmentAndImplementationOfAlgorithms", "EconomicsAndSocialStudies"] | None, element):
+        self.ui.tbtnSupplementary.setText(element.text())
         self.dataManager.fe2_OralSupplementaryExaminationSubject = exam
         self._selectedSupplementaryExam = exam
         exams = self.dataManager.may_take_supplementary_exam()
         self._enable_eligible_supplementary_exams(exams)
         self.ui.numFe2_supplementary.setEnabled(exam is not None)
-        if exam is None: self.ui.numFe2_supplementary.setValue(0)
+        if exam is None:
+            self.ui.numFe2_supplementary.setValue(0)
+            #self.ui.
+            self.dataManager.fe2_OralSupplementaryExaminationSubject = None
+            self.dataManager.fe2_OralSupplementaryExamination = 0
+            self._selectedSupplementaryExam = None
         element.setEnabled(False)
         self.load_ui_values_to_data_manager()
         self.set_ui_values_by_data_manager()
@@ -460,7 +452,7 @@ class MainWindow(QMainWindow):
                 'fe2_proj': 'Planen und Umsetzen eines Softwareprojektes. ',
                 'average': 'Durchschnitts-Nohte. ',      # Er würde anstatt "Durchschnittsnote" "Durchschnittsnot" sagen "Durchschnitts-Notä" klingt dem eigentlichen Wort am nächsten
                 'passed': 'Die Prüfung wurde damit bestanden. Herzlichen Glückwunsch!',
-                'failed': 'Prüfung wurde damit nicht bestanden. Mal ist man der Hund, mal ist man der Baum . . . Ha .  Ha .  Ha',
+                'failed': 'Prüfung wurde damit nicht bestanden.',
                 'na': 'nicht vorhanden'
             },
             'en': {
@@ -612,7 +604,7 @@ def main():
 
 
     # from qt_material
-    apply_stylesheet(app, f"{Config.STYLE}.xml", extra=extra)
+    apply_stylesheet(app, f"{Config.STYLE}.xml", extra=extra, invert_secondary="light_" in Config.STYLE)
     window = MainWindow()
 
     res = app.exec()

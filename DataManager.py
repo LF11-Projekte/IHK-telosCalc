@@ -51,18 +51,18 @@ class DataManager:
         if self.fe2_OralSupplementaryExaminationSubject == "PlanningASoftwareProduct":
             self.fe2_1 = DataManager._int(self.calc_supplementary_score(
                 self.fe2_OralSupplementaryExamination, self.fe2_PlanningASoftwareProduct))
-            
+
         elif self.fe2_OralSupplementaryExaminationSubject == "DevelopmentAndImplementationOfAlgorithms":
             self.fe2_2 = DataManager._int(self.calc_supplementary_score(
                 self.fe2_OralSupplementaryExamination, self.fe2_DevelopmentAndImplementationOfAlgorithms))
-            
+
         elif self.fe2_OralSupplementaryExaminationSubject == "EconomicsAndSocialStudies":
             self.fe2_3 = DataManager._int(self.calc_supplementary_score(
                 self.fe2_OralSupplementaryExamination, self.fe2_EconomicsAndSocialStudies))
 
 
     def calculate_all_grades(self):
-        
+
         self.fe2_1 = self.fe2_PlanningASoftwareProduct
         self.fe2_2 = self.fe2_DevelopmentAndImplementationOfAlgorithms
         self.fe2_3 = self.fe2_EconomicsAndSocialStudies
@@ -84,12 +84,12 @@ class DataManager:
             10 * DataManager._int(self.fe2_2) + \
             10 * DataManager._int(self.fe2_3) + \
             25 * int(oral_score) + 25 * int(written_score)
-        
+
         self.overall_score: int = int(math.ceil(0.01 * float(20 * DataManager._int(self.fe1_ItWorkstation) + scores)))
         self.overall_grade: float | None = DataManager.calc_grade(self.overall_score)
         self.fe2_score: int = int(math.ceil(0.0125 * float(scores)))
         self.fe2_grade: float | None = DataManager.calc_grade(self.fe2_score)
-        
+
         self.overall_average_grade: float | None = math.ceil( \
             2 * DataManager._float(self.fe1_ItWorkstation_Grade) +
             2 * DataManager._float(self.fe2_PlanningASoftwareProduct_Grade) +
@@ -97,7 +97,7 @@ class DataManager:
             2 * DataManager._float(self.fe2_EconomicsAndSocialStudies_Grade) +
             2 * DataManager._float(self.fe2_PlanningAndImplementingASoftwareProduct_Grade) \
         ) / 10.0
-    
+
 
     @staticmethod
     def _int(value: int | None) -> int:
@@ -145,8 +145,13 @@ class DataManager:
         if self.fe2_EconomicsAndSocialStudies_Grade is not None and self._float(self.calc_grade(self.fe2_EconomicsAndSocialStudies)) >= 4.5:
             eligible_subjects.append("EconomicsAndSocialStudies")
 
+        if eligible_subjects is None:
+            self.fe2_OralSupplementaryExaminationSubject = None
+            self.fe2_OralSupplementaryExamination = None
+            self.calculate_all_grades()
+
         return eligible_subjects
-    
+
 
     def has_passed(self) -> bool:
         fe2_grades = [

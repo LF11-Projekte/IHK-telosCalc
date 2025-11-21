@@ -3,12 +3,14 @@ a4paper,
 12pt
 ]{scrartcl}
 
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[oldstylenums,largesmallcaps,nomath]{kpfonts}
 
 \usepackage[english]{babel}
-\usepackage[german=guillemets]{csquotes}
+
+\usepackage{csquotes}
 \usepackage{xpatch}
 \usepackage{hyphenat}
 
@@ -37,78 +39,81 @@ a4paper,
 	pdfauthor={telosCalc Team}
 }
 
-% Colors & styles
+% Colors & Styles
 \definecolor{accent}{HTML}{2A4B7C}
 \definecolor{hintbg}{HTML}{F2F7FB}
 \definecolor{hintborder}{HTML}{D6E6F4}
 \newenvironment{hintbox}{\begin{framed}\noindent\color{black}\setlength{\FrameSep}{8pt}\setlength{\FrameRule}{0.6pt}\definecolor{shadecolor}{named}{hintbg}}{\end{framed}}
 
 \subject{\so{User Manual}}
-\subtitle{ -- \\ The \textsc{IHK} Examination Grade Calculation Tool for IT Specialists}
+\subtitle{ -- \\ The \textsc{IHK} Grade Calculation Tool for IT Specialists}
 \title{\Huge \textsc{telosCalc}}
-\author{Karl Jahn \and Damian Carstens \and Kai Weißenborn}
-\date{\today}
+\author{Karl R. Jahn \and Damian Carstens \and Kai F. Weißenborn}
+\date{20 November 2025}
+
 
 \begin{document}
+	\thispagestyle{empty}
 	\maketitle
-	
+
 	\begin{center}
-		\textbf{Summary:} \textsc{telosCalc} is a tool for calculating \textsc{IHK} final examination grades for IT Specialists, developed primarily for the field of application development. It is mainly intended as a Windows desktop application, but running it on \texttt{macOS} or \texttt{Linux} systems is experimentally possible.  
-		This manual is intended for end users and includes instructions for installation, operation, and troubleshooting.
+		\textbf{Summary:} \textsc{telosCalc} is a tool for calculating \textsc{IHK} final exam grades for IT specialists, developed for the field of application development. It is primarily a Windows desktop application. Experimental usage on \texttt{macOS} or \texttt{Linux} systems is also possible. This manual is intended for end users and includes installation, operation, and troubleshooting instructions.
 	\end{center}
-	
+
+	\begin{center}
+		\textbf{Notes:} Options or choices are represented using curly braces and pipes: \texttt{\{Option 1 | Option 2\}}. Furthermore, please note that the executable Windows file \emph{may take up to ten seconds or longer to load depending on the system} when starting.
+	\end{center}
+		\begin{center}
+		\emph{This document was automatically translated using ChatGPT.}
+	\end{center}
+
 	\bigskip
 	\tableofcontents
 	\newpage
-	
+
+
 	\section{System Requirements}
 	\begin{itemize}
-		\item Windows 10 or newer (for the provided \texttt{telosCalc.exe})
-		\item Optional: Python 3.8+ if running from source, or when running the tool on \texttt{Linux} or \texttt{macOS}
+		\item Windows 10 or newer (for the included \texttt{telosCalc.exe})
+		\item Optional: Python 3.8+ when running from source, or if you want to run the tool on \texttt{Linux} or \texttt{macOS}.
 	\end{itemize}
-	
+
 	\section{Installation \& Startup}
-	
 	\subsection*{Running the EXE}
 	\begin{enumerate}
 		\item Copy \texttt{telosCalc.exe} into any directory.
-		\item Double-click to start. On first launch, a configuration file (\texttt{telosCalc.conf}) is created in the same directory.  
-		This file is loaded each time \texttt{telosCalc.exe} is started. The stored settings are applied so the same configuration as on the last shutdown is restored.  
-		Accordingly, the file is overwritten on each program exit with the currently active settings.
+		\item Double-click to start. On first run a configuration file (\texttt{telosCalc.conf}) will be created in the same directory. This file is read every time \texttt{telosCalc.exe} is started. The settings are then loaded so that the same configuration as at the last application shutdown is restored. Accordingly, the file is overwritten on every shutdown with the current settings.\\
+		\textit{Warning: Launching the application may \guillemotright take a moment\guillemotleft\ (see Notes).}
 	\end{enumerate}
-	
-	\subsection*{Running from Source (optional)}
+
+	\subsection*{From Source (optional)}
 	\begin{enumerate}
 		\item Install Python 3.8+.
-		\item Create a virtual environment: \texttt{python -m venv .venv} and activate via\\ 
-		\texttt{.\textbackslash.venv\textbackslash{}Scripts\textbackslash{}activate}.
+		\item Create a virtual environment: \texttt{python -m venv .venv} and activate via:\\ \texttt{.\textbackslash.venv\textbackslash{}Scripts\textbackslash{}activate\{\ .bat | .ps1 | ␣\ \}}
 		\item Install dependencies: \texttt{pip install -r requirements.txt}
-		\item \underline{Start the application:} \texttt{python main.py}\\[.65em]
-		\emph{or}:\\[.65em]
-		\underline{Build the application:}\\
-		Using \texttt{pip install pyinstaller \&\& pyinstaller main.spec}.  
-		Before doing so, you may specify a target architecture\footnote{Adjust the variable \texttt{target\_arch} (possible values: \texttt{x86\_64}, \texttt{arm64}, or \texttt{universal2}). Further information regarding \texttt{pyinstaller} can be found here: \url{https://pyinstaller.org}} inside \texttt{main.spec}.  
-		If none is specified, the architecture of the current system is used automatically.
+		\item \underline{Start the application:} \texttt{python main.py}\\[.65em]\emph{or}:\\[.65em] \underline{Build the application:}
+		Using \texttt{pip install pyinstaller \&\& pyinstaller main.spec}. Beforehand you may set a target architecture\footnote{Adjust the variable \texttt{target\_arch} (possible values: \texttt{x86\_64}, \texttt{arm64}, or \texttt{universal2}); further information about \texttt{pyinstaller} is available here: \url{https://pyinstaller.org}} in \texttt{main.spec}. If none is specified, the current system architecture is used automatically.
 	\end{enumerate}
-	
+
+	%\begin{hintbox}
+	%	\textbf{Tip:} For debugging, start the application from the console (\texttt{python main.py}) to see error messages and log output directly.
+	%\end{hintbox}
+
+    \newpage
 	\section{Using the GUI}
-	
-	The menu bar (see Figure~\ref{fig:menu}) provides the options \texttt{File}, \texttt{Language}, \texttt{Appearance}, and \texttt{Help}.  
-	Under \texttt{Help}, the options \texttt{Documentation}—which links to this document—and \texttt{About}—which provides information about the application—are available.
-	
+
+	The menu bar (see Figure~\ref{fig:menu}) provides the options \texttt{File}, \texttt{Language}, \texttt{Appearance} and \texttt{Help}. The \texttt{Help} menu contains the options \texttt{Documentation}, which links to this manual\footnote{The documentation is embedded in the executable and will open in the current UI language}, and \texttt{About}, which provides information about the application.
+
 	\begin{figure}[H]
 		\centering
 		\fbox{\includegraphics[width=0.80\linewidth]{img/menu.png}}
 		\caption{Menu bar / Input parameter import \& export}
 		\label{fig:menu}
 	\end{figure}
-	
-	\subsection{Color Schemes (\texttt{Appearance})}
-	
-	The interface is available in various color schemes, each in a light and dark version.  
-	These can be selected via \texttt{Menu Bar > Appearance > \{light / dark\} > \{color\}} (see Figure~\ref{fig:color}).  
-	Figure~\ref{fig:dark} shows an example of a dark color scheme.
-	
+
+	\subsection{Color Scheme (\texttt{Appearance})}
+	The interface is available in various color schemes, each in a light and dark version. These can be selected via \texttt{Menu Bar > Appearance > \{Light / Dark\} > \{Color\}} (see Figure~\ref{fig:color}). Figure~\ref{fig:dark} shows an example of a dark appearance.
+
 	\begin{figure}[H]
 		\centering
 		\begin{minipage}{.5\textwidth}
@@ -120,60 +125,51 @@ a4paper,
 		\begin{minipage}{.5\textwidth}
 			\centering
 			\fbox{\includegraphics[width=0.90\linewidth]{img/lang-dark.png}}
-			\captionof{figure}{Dark mode / Language options}
+			\captionof{figure}{Dark appearance / Language options}
 			\label{fig:dark}
 		\end{minipage}
 	\end{figure}
-	
-	Under \texttt{Language}, you can switch between the German and English versions of the application (see Figure~\ref{fig:dark}).  
-	The \texttt{checkbox} next to the language indicates which one is active.  
-	The \texttt{Speech Output} option is also available here; more details can be found in Section~\ref{speech}.
-	
+
+	Under \texttt{Language} you can switch between the German and English versions of the application (see Figure~\ref{fig:dark}). The \texttt{checkbox} to the left of the language indicates which one is selected. The \texttt{Speech Output} option is also available there. See Section~\ref{speech} for details.
+
 	\subsection{Input Parameters}
-	
-	Input parameters can be saved or loaded via \texttt{File > \{Load Input Parameters / Save Input Parameters\}} (see Figure~\ref{fig:menu}).  
-	All input values from the score fields are stored in \texttt{JSON} format. When loading a file, all existing inputs are overwritten by the values from the \texttt{JSON} file.
-	
+	Inputs can be saved or loaded under \texttt{File > \{Load Input Parameters / Save Input Parameters\}} (see Figure~\ref{fig:menu}). All entries in the points fields are stored in \texttt{JSON} format. When loading, all previous inputs are overwritten with the new values from the \texttt{JSON} file.
+
 	\subsection{Speech Output \& Accessibility} \label{speech}
-	
-	Enabling the speech output option activates an audio-assisted navigation mode.  
-	When hovering over GUI elements with the mouse, a descriptive text is spoken.  
-	The same applies when navigating between GUI elements using the \texttt{Tab} key.
-	
-	The \texttt{Announce Grades} button is also enabled in this mode.  
-	When clicked, all intermediate grades, the overall average, and the final examination result (pass/fail) will be spoken aloud in the selected output language.
-	
-	All essential GUI elements can be accessed using the Tab key.  
-	The top menu can be accessed using the \texttt{Alt} key. Navigation inside it is possible using the arrow keys, space bar, and \texttt{Tab}, and menu items can be selected using \texttt{Enter}.  
-	Pressing \texttt{Esc} closes the top menu again.
-	
-	\section{Grade Calculation}
-	
-	The grade calculation follows the official criteria defined in the training regulations, BBiG, and official IHK documents.  
-	Specifically, whether the examination is passed or failed follows the process shown below:\\[1em]
-	
+	Enabling the speech output option activates audio guidance for navigation. When \guillemotright hovering with the mouse\guillemotleft\ over elements, a text is usually spoken. The same applies when switching GUI elements using the \texttt{Tab} key. The \texttt{Announce Grades} button also becomes enabled. When clicking that button, all intermediate grades, the overall average grade and the exam result (i.e. pass/fail) are announced in the selected target language.
+
+	All necessary UI elements can be traversed using the Tab key. The top menu is accessed using the \texttt{Alt} key — inside it you can navigate with arrow keys, space, and the \texttt{Tab} key, and confirm/select items with \texttt{Enter}. Pressing \texttt{Esc} exits the top menu. A special case is the \texttt{Oral Supplementary Exam} menu — see the next section for details.
+
+    \newpage
+	\section{Grade Calculation}\label{gradecalculation}
+
+	The grade calculation follows the official criteria derived from the training regulations, the BBiG and official IHK information. Specifically, the determination of pass or fail follows the process below:\\[1em]
+
 	\includegraphics[width=\textwidth]{img/criteria.png}\\[.5em]
-	
-	Selection of the optional oral supplementary examination is only possible if the candidate is eligible based on their written results.  
-	Only then can the corresponding selection element be reached via the Tab key or clicked using the mouse.  
-	A menu opens in which eligible subjects can be selected (invalid ones are greyed out).  
-	This process is shown in Figure~\ref{fig:mep}.  
-	Only after selecting a valid supplementary examination subject can a score for it be entered.
-	
+
+	The option to select an oral supplementary examination can only be accessed if the candidate is eligible. Only then can the intended selection element for the examination subject be reached via the Tab key and expanded with the space bar (or by clicking the right arrow with the mouse). A menu opens in which the eligible examination subject can be selected and confirmed with the Enter key (invalid subjects are greyed out). The procedure is illustrated in Figure~\ref{fig:mep}. Only when a valid oral supplementary examination is selected can a corresponding score be entered.
+
 	\begin{figure}[h]
 		\centering
 		\fbox{\includegraphics[width=0.55\linewidth]{img/mep.png}}
 		\caption{Oral supplementary examination}
 		\label{fig:mep}
 	\end{figure}
-	
+
+
 	\section{Troubleshooting}
-	
 	\begin{description}
-		\item[Program does not start:] Check antivirus/SmartScreen; try running as administrator.
+		\item[Program does not start:] Check antivirus/SmartScreen; run as administrator and grant permissions if necessary.
 		\item[Configuration error:] Rename/delete \texttt{telosCalc.conf}; restart the app if needed.
-		\item[TTS does not work:] Run from source; check console output; install missing dependencies.  
-		On Windows, also check language settings and ensure German \& English speech packages are installed.
+		\item[TTS problems:] Run from source; check console output and reinstall missing packages if necessary. On Windows, also check language settings and install localization packs for German \& English if not present.
 	\end{description}
-	
+
+	\section{Privacy}
+	No special data protection measures are required because no personal data is stored (provided the user does not choose to store such data). The user is responsible for the privacy of exported input parameter files (e.g. file names and storage locations).
+
+	\newpage
+	\addcontentsline{toc}{section}{\listfigurename}
+	\listoffigures
+
+
 \end{document}

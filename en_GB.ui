@@ -1414,9 +1414,11 @@
   <tabstop>numFe2_2</tabstop>
   <tabstop>numFe2_3</tabstop>
   <tabstop>tbtnSupplementary</tabstop>
+  <tabstop>numFe2_supplementary</tabstop>
   <tabstop>numFe2_out</tabstop>
   <tabstop>numFe2_7</tabstop>
   <tabstop>numFe2_8</tabstop>
+  <tabstop>btnAnnounceGrades</tabstop>
  </tabstops>
  <resources/>
  <connections/>
